@@ -32,6 +32,10 @@ dependencies:
   cloud_firestore:
   provider:
   dropdown_formfield: ^0.1.2
+  toast: ^0.1.5
+  cached_network_image:
+  flutter_staggered_animations: ^0.1.2
+  page_transition:
 
 dev_dependencies:
   flutter_test:

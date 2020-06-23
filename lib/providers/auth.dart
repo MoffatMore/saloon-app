@@ -73,8 +73,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createUser(
-      String username, String phone, String lastname, String email, String password) async {
+  Future<void> createUser(String username, String phone, String lastname, String email,
+      String password, String mode, String profession, String description) async {
     signIn();
     try {
       email = email.trim();
@@ -82,12 +82,25 @@ class AuthProvider with ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password);
       if (_result.user != null) {
         var user = _result.user;
-        Firestore.instance
-            .collection("profile")
-            .document(user.uid)
-            .setData({"username": username, "surname": lastname, "phone": phone, "id": user.uid})
-        .then((value) => signOut());
-        
+        if (mode == 'Customer') {
+          Firestore.instance.collection("profile").document(user.uid).setData({
+            "username": username,
+            "surname": lastname,
+            "phone": phone,
+            "id": user.uid,
+            'mode': mode,
+          }).then((value) => signOut());
+        } else {
+          Firestore.instance.collection("profile").document(user.uid).setData({
+            "username": username,
+            "surname": lastname,
+            "phone": phone,
+            "id": user.uid,
+            'mode': mode,
+            'profession': profession,
+            'description': description
+          }).then((value) => signOut());
+        }
       } else {
         log('couldn\'t register user');
       }

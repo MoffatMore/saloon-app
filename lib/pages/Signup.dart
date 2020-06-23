@@ -6,6 +6,7 @@ import 'package:cssalonapp/widgets/BackGroundImage.dart';
 import 'package:cssalonapp/widgets/CustomButton.dart';
 import 'package:cssalonapp/widgets/CustomLogo.dart';
 import 'package:cssalonapp/widgets/CustomTextFormField.dart';
+import 'package:dropdown_formfield/dropdown_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,19 +28,24 @@ class SignupState extends State<Signup> {
   FocusNode username;
   FocusNode surname;
   FocusNode phone;
+  FocusNode description;
   TextEditingController emailCtrl;
   TextEditingController passwordCtrl;
   TextEditingController usernameCtrl;
   TextEditingController surnameCtrl;
   TextEditingController phoneCtrl;
+  TextEditingController descriptionCtrl;
   AuthProvider _provider;
   bool submitted;
+  String mode;
+  String profession;
 
   @override
   void initState() {
     super.initState();
     email = FocusNode();
     password = FocusNode();
+    description = FocusNode();
     username = FocusNode();
     surname = FocusNode();
     phone = FocusNode();
@@ -48,6 +54,7 @@ class SignupState extends State<Signup> {
     usernameCtrl = TextEditingController();
     surnameCtrl = TextEditingController();
     phoneCtrl = TextEditingController();
+    descriptionCtrl = TextEditingController();
     submitted = false;
   }
 
@@ -79,13 +86,14 @@ class SignupState extends State<Signup> {
     username.unfocus();
     surname.unfocus();
     phone.unfocus();
+    description.unfocus();
   }
 
   signup() async {
     setState(() => isAutoSubmit = true);
     if (_formKey.currentState.validate()) {
-      _provider.createUser(
-          usernameCtrl.text, phoneCtrl.text, surnameCtrl.text, emailCtrl.text, passwordCtrl.text);
+      _provider.createUser(usernameCtrl.text, phoneCtrl.text, surnameCtrl.text, emailCtrl.text,
+          passwordCtrl.text, mode, profession, descriptionCtrl.text);
       Navigator.pop(context);
     }
   }
@@ -110,11 +118,11 @@ class SignupState extends State<Signup> {
                 children: <Widget>[
                   SizedBox(
                     height: (MediaQuery.of(context).orientation == Orientation.portrait)
-                        ? MediaQuery.of(context).size.height / 50
+                        ? MediaQuery.of(context).size.height / 130
                         : 0,
                   ),
                   CustomLogo(),
-                  SizedBox(height: 30.0),
+                  SizedBox(height: 0.0),
                   loginText(),
                   SizedBox(height: 30.0),
                   Padding(
@@ -180,6 +188,95 @@ class SignupState extends State<Signup> {
                         FocusScope.of(context).requestFocus(password);
                       },
                       textInputType: TextInputType.emailAddress,
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20.0),
+                    color: Colors.white,
+                    child: DropDownFormField(
+                      titleText: 'Sign up mode',
+                      hintText: 'Please choose one',
+                      value: mode,
+                      onSaved: (value) {
+                        setState(() {
+                          mode = value;
+                        });
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          mode = value;
+                        });
+                      },
+                      textField: 'display',
+                      valueField: 'value',
+                      required: true,
+                      dataSource: [
+                        {'display': 'Customer', 'value': 'Customer'},
+                        {'display': 'Stylist', 'value': 'Stylist'},
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  Visibility(
+                    visible: mode != null && mode == 'Stylist',
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20.0),
+                      color: Colors.white,
+                      child: DropDownFormField(
+                        titleText: 'Stylist Speciality',
+                        hintText: 'Please choose one',
+                        value: profession,
+                        onSaved: (value) {
+                          setState(() {
+                            profession = value;
+                          });
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            profession = value;
+                          });
+                        },
+                        textField: 'display',
+                        valueField: 'value',
+                        required: true,
+                        dataSource: [
+                          {'display': 'Hair Care', 'value': 'Hair Care'},
+                          {'display': 'Make Up Artist', 'value': 'Make Up'},
+                          {'display': 'Bridal', 'value': 'Bridal'},
+                          {'display': 'Nail Technician', 'value': 'Nail Technician'},
+                        ],
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: mode != null && mode == 'Stylist',
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 10.0),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: TextFormField(
+                            textInputAction: TextInputAction.next,
+                            controller: descriptionCtrl,
+                            focusNode: description,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(15.0),
+                              hintText: "Job Description",
+                              fillColor: Colors.white,
+                              filled: true,
+                              enabledBorder: formOutlineBorder,
+                              border: formOutlineBorder,
+                              focusedBorder: formOutlineBorder,
+                            ),
+                            maxLines: 4,
+                            onSaved: (value) {
+                              description.unfocus();
+                            },
+                            keyboardType: TextInputType.text,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 10.0),

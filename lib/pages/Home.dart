@@ -3,6 +3,7 @@ import 'package:cssalonapp/pages/AboutUs.dart';
 import 'package:cssalonapp/pages/Blogs.dart';
 import 'package:cssalonapp/pages/ContactUs.dart';
 import 'package:cssalonapp/pages/HomeListView.dart';
+import 'package:cssalonapp/pages/appointments.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:cssalonapp/widgets/BackGroundImage.dart';
 import 'package:flutter/cupertino.dart';
@@ -106,8 +107,17 @@ class HomeSection extends StatelessWidget {
               child: Card(
                 child: Align(
                   alignment: Alignment.center,
-                  child: Text(homeListHeaderSection[index]['name'],
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+                  child: GestureDetector(
+                    child: Text(homeListHeaderSection[index]['name'],
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+                    onTap: () => {
+                      if (homeListHeaderSection[index]['name'] == 'Appointments')
+                        {
+                          Navigator.push(
+                              context, MaterialPageRoute(builder: (_) => AppointmentScreen()))
+                        }
+                    },
+                  ),
                 ),
               ),
             ),

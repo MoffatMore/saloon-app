@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cssalonapp/pages/BlogDetails.dart';
-import 'package:cssalonapp/widgets/BackGroundImage.dart';
+import 'package:cssalonapp/providers/bookings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -17,83 +18,114 @@ class Blogs extends StatelessWidget {
       backgroundColor: Colors.black,
       body: Stack(
         children: <Widget>[
-          BackGroundImage(image: "assets/images/image1.jpg"),
-          Container(
-            child: ListView.separated(
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BlogDetails(
-                            index: index,
-                            image: "assets/images/image1.jpg",
-                            blog: blogDetails,
-                            title: "Job Description",
-                          ),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5.0),
-                        child: Container(
-                          height: 150.0,
-                          color: Colors.white,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Hero(
-                                tag: index,
-                                child: Container(
-                                  margin: EdgeInsets.all(0.0),
-                                  width: 150.0,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    child: Image.asset(
-                                      "assets/images/image1.jpg",
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                  child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Text(
-                                      "Job Description",
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      blogDetails,
-                                      maxLines: 5,
-                                    )
-                                  ],
-                                ),
-                              ))
-                            ],
-                          ),
-                        ),
-                      ),
+          StreamBuilder<QuerySnapshot>(
+              stream: Bookings.getHairStylist(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: Container(
+                      child: CupertinoActivityIndicator(),
                     ),
                   );
-                },
-                separatorBuilder: (context, index) {
-                  return SizedBox(
-                    height: 10.0,
-                  );
-                },
-                itemCount: 10),
-          )
+                }
+                return Container(
+                  child: ListView.separated(
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlogDetails(
+                                  index: index,
+                                  image: "assets/images/user.jpg",
+                                  blog: blogDetails,
+                                  title: "Job Description",
+                                ),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Container(
+                                height: 170.0,
+                                color: Colors.white,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Hero(
+                                      tag: index,
+                                      child: Container(
+                                        margin: EdgeInsets.all(0.0),
+                                        width: 150.0,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(4.0),
+                                          child: Image.asset(
+                                            "assets/images/user.jpg",
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                        child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: <Widget>[
+                                          Text(
+                                            "Name: " +
+                                                "${snapshot.data.documents[index]['username']}",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold, fontSize: 16.0),
+                                          ),
+                                          SizedBox(
+                                            height: 5.0,
+                                          ),
+                                          Text(
+                                            "Contact: " +
+                                                "${snapshot.data.documents[index]['phone']}",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold, fontSize: 16.0),
+                                          ),
+                                          SizedBox(
+                                            height: 5.0,
+                                          ),
+                                          Text(
+                                            "Job Description",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold, fontSize: 16.0),
+                                          ),
+                                          SizedBox(
+                                            height: 5.0,
+                                          ),
+                                          Text(
+                                            snapshot.data.documents[index]['description'] ??
+                                                'No job description',
+                                            maxLines: 5,
+                                          )
+                                        ],
+                                      ),
+                                    ))
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          height: 10.0,
+                        );
+                      },
+                      itemCount: snapshot.data.documents.length),
+                );
+              })
         ],
       ),
     );
