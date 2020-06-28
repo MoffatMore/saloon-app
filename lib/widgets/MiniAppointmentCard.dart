@@ -15,16 +15,16 @@ class MiniAppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('Mini appointment Card tapped');
         onCardTapped();
       },
       child: Card(
         elevation: 0.3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Container(
-          width: SizeConfig.horizontalBloc * 100,
+          width: SizeConfig.horizontalBloc * 50,
           height: SizeConfig.verticalBloc * 10.7,
-          decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(10)),
+          decoration:
+              BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(10)),
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Row(
@@ -55,9 +55,10 @@ class MiniAppointmentCard extends StatelessWidget {
                         width: SizeConfig.safeBlockHorizontal * 90,
                         //color: Colors.pink,
                         child: Text(
-                          'Date time: ' + appointmentData.date,
+                          'Date: ' + appointmentData.date,
                           style: TextStyle(
-                            fontSize: SizeConfig.safeBlockHorizontal * 3.5,
+                            fontWeight: FontWeight.bold,
+                            fontSize: SizeConfig.safeBlockHorizontal * 4.0,
                           ),
                         ),
                       ),
@@ -68,7 +69,8 @@ class MiniAppointmentCard extends StatelessWidget {
                         child: Text(
                           'Status: ' + (appointmentData.status ?? 'Pending'),
                           style: TextStyle(
-                            fontSize: SizeConfig.safeBlockHorizontal * 3.5,
+                            fontWeight: FontWeight.bold,
+                            fontSize: SizeConfig.safeBlockHorizontal * 4.0,
                           ),
                         ),
                       ),

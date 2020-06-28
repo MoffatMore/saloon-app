@@ -6,10 +6,6 @@ import 'AppointmentBackCard.dart';
 import 'AppointmentFrontCard.dart';
 import 'SlidingCard.dart';
 
-///This is the main Appointment card
-///it regroups the AppointmentFrontCard
-///and AppointmentBacktCard together
-///using my future dart package ''SlidingCard''
 class AppointmentCard extends StatelessWidget {
   const AppointmentCard(
       {Key key,

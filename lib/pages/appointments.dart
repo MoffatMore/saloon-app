@@ -3,9 +3,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cssalonapp/Model/appointment.dart';
-import 'package:cssalonapp/providers/AppointmentManager.dart';
 import 'package:cssalonapp/providers/auth.dart';
-import 'package:cssalonapp/widgets/AppointmentCard.dart';
 import 'package:cssalonapp/widgets/MiniAppointmentCard.dart';
 import 'package:cssalonapp/widgets/SlidingCard.dart';
 import 'package:cssalonapp/widgets/sizeConfig.dart';
@@ -41,8 +39,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     midHeader = [];
     futureAppointment = [];
     finalList = [];
-
-    AppointmentManager.generateAppointmentList();
   }
 
   @override
@@ -122,106 +118,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   ///panning on rebuilding them dynamically by adding custom parameters
   Future<bool> initiateList() async {
     //First we work on the header of the list
-    topHeader.add(
-      Padding(
-        padding: const EdgeInsets.only(left: 20.0, bottom: 9, top: 7),
-        child: new Container(
-          width: SizeConfig.safeBlockHorizontal * 90,
-          height: SizeConfig.verticalBloc * 3,
-          //color: Colors.pink,
-          child: Text(
-            'Welcome Back !',
-            style: TextStyle(fontSize: SizeConfig.horizontalBloc * 6, color: Colors.black45),
-          ),
-        ),
-      ),
-    );
-    topHeader.add(
-      Padding(
-        padding: const EdgeInsets.only(left: 20.0, bottom: 15),
-        child: new Container(
-          width: SizeConfig.safeBlockHorizontal * 90,
-          height: SizeConfig.verticalBloc * 5,
-          //color: Colors.pink,
-          child: Text(
-            'Dr. @emilecode',
-            style: TextStyle(
-              fontSize: SizeConfig.horizontalBloc * 9.5,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    //now we create the card comming from the appointment manager
-    for (var anElement in AppointmentManager.appointmentList) {
-      if (anElement.isFuture == false) {
-        ///not obliged to be this way , can directly be passed at time of initialization
-
-        print('adding big card');
-        currentAppointment.add(Center(
-            child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: AppointmentCard(
-            onCardTapped: () {
-              Navigator.push(
-                  context,
-                  PageTransition(
-                      type: PageTransitionType.fade,
-                      child: AppointmentDetailScreen(
-                        appointmentData: anElement,
-                      )));
-            },
-            key: Key(Random().nextInt(4000).toString()),
-            slidingCardController: aController,
-            appointmentData: anElement,
-          ),
-        )));
-      } else {
-        print('adding mini card');
-        futureAppointment.add(Center(
-            child: MiniAppointmentCard(
-          onCardTapped: () {
-            Navigator.push(
-                context,
-                PageTransition(
-                    type: PageTransitionType.fade,
-                    child: AppointmentDetailScreen(
-                      appointmentData: anElement,
-                    )));
-          },
-          appointmentData: anElement,
-        )));
-      }
-    }
-    midHeader.add(
-      Padding(
-        padding: const EdgeInsets.only(top: 10.0, bottom: 9, left: 20),
-        child: Container(
-          width: SizeConfig.safeBlockHorizontal * 90,
-          height: SizeConfig.verticalBloc * 3,
-          //color: Colors.pink,
-          child: Text(
-            'Next appointments',
-            style: TextStyle(fontSize: SizeConfig.horizontalBloc * 5, color: Colors.black45),
-          ),
-        ),
-      ),
-    );
-
-    // We create the final list that will be passed to the
-    //listView.builder
-    finalList.addAll(topHeader);
-    finalList.addAll(currentAppointment);
-    finalList.addAll(midHeader);
-    finalList.addAll(futureAppointment);
-    if (isFirstTime == false) {
-      isLoading = false;
-      setState(() {});
-    }
-    setState(() {});
     return true;
   }
 }

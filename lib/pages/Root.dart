@@ -1,6 +1,7 @@
 import 'package:cssalonapp/pages/Home.dart';
 import 'package:cssalonapp/pages/Login.dart';
 import 'package:cssalonapp/pages/Signup.dart';
+import 'package:cssalonapp/pages/StylistAppointments.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:cssalonapp/widgets/loading_screen.dart';
 import 'package:flutter/material.dart';
@@ -32,8 +33,8 @@ class RootState extends State<Root> {
 
     switch (_auth.state) {
       case AuthState.SIGNEDIN:
-        if (_currentUser.admin) return Home();
-        return Home();
+        if (_currentUser.customer) return Home();
+        return StylistAppointmentScreen();
       case AuthState.SIGNEDOUT:
         return Login();
       case AuthState.LOADING:

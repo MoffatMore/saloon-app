@@ -32,4 +32,10 @@ class Bookings {
         Firestore.instance.collection('profile').where('mode', isEqualTo: 'Stylist').snapshots();
     return snapshot;
   }
+
+  static Stream<QuerySnapshot> myAppointments(String username) {
+    var snapshot =
+        Firestore.instance.collection('bookings').where('stylist', isEqualTo: username).snapshots();
+    return snapshot;
+  }
 }

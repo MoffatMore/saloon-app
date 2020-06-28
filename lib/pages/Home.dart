@@ -3,12 +3,13 @@ import 'package:cssalonapp/pages/AboutUs.dart';
 import 'package:cssalonapp/pages/Blogs.dart';
 import 'package:cssalonapp/pages/ContactUs.dart';
 import 'package:cssalonapp/pages/HomeListView.dart';
-import 'package:cssalonapp/pages/appointments.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:cssalonapp/widgets/BackGroundImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'appointments.dart';
 
 class Home extends StatefulWidget {
   @override

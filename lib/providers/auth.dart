@@ -1,10 +1,15 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:multi_image_picker/src/asset.dart';
+import 'package:path/path.dart' as Path;
+import 'package:path_provider/path_provider.dart';
 
 import '../Model/user.dart';
 
@@ -74,7 +79,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> createUser(String username, String phone, String lastname, String email,
-      String password, String mode, String profession, String description) async {
+      String password, String mode, String profession, String description, File image) async {
     signIn();
     try {
       email = email.trim();
@@ -91,15 +96,24 @@ class AuthProvider with ChangeNotifier {
             'mode': mode,
           }).then((value) => signOut());
         } else {
-          Firestore.instance.collection("profile").document(user.uid).setData({
-            "username": username,
-            "surname": lastname,
-            "phone": phone,
-            "id": user.uid,
-            'mode': mode,
-            'profession': profession,
-            'description': description
-          }).then((value) => signOut());
+          StorageReference storageReference =
+              FirebaseStorage.instance.ref().child('styles/${Path.basename(image.path)}');
+          StorageUploadTask uploadTask = storageReference.putFile(image);
+          await uploadTask.onComplete;
+
+          await storageReference.getDownloadURL().then((fileURL) {
+            print('File Uploaded');
+            Firestore.instance.collection("profile").document(user.uid).setData({
+              "username": username,
+              "surname": lastname,
+              "phone": phone,
+              "id": user.uid,
+              'mode': mode,
+              'profession': profession,
+              'description': description,
+              'styles': fileURL
+            }).then((value) => signOut());
+          });
         }
       } else {
         log('couldn\'t register user');
@@ -113,5 +127,43 @@ class AuthProvider with ChangeNotifier {
     _state = AuthState.SIGNEDOUT;
     log('successfully registered user');
     notifyListeners();
+  }
+
+  Future<void> uploadStyles(List<Asset> images) {
+    images.forEach((image) async {
+      File file = await writeToFile(await image.getByteData(), image.name);
+      StorageReference storageReference =
+          FirebaseStorage.instance.ref().child('styles/${Path.basename(file.path)}');
+      StorageUploadTask uploadTask = storageReference.putFile(file);
+      await uploadTask.onComplete;
+
+      await storageReference.getDownloadURL().then((fileURL) {
+        print('File Uploaded');
+        Firestore.instance
+            .collection("styles")
+            .document()
+            .setData({"stylist": currentUser.id, 'picture': fileURL});
+      });
+    });
+  }
+
+  Future<File> writeToFile(ByteData data, String name) async {
+    final buffer = data.buffer;
+    final path = await _localPath;
+    return new File('$path/$name')
+        .writeAsBytes(buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  Stream<QuerySnapshot> getPics() {
+    return Firestore.instance
+        .collection("styles")
+        .where("stylist", isEqualTo: currentUser.id)
+        .snapshots();
   }
 }

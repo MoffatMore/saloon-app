@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cssalonapp/Model/Validation.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:cssalonapp/theme/Color.dart';
@@ -9,6 +11,7 @@ import 'package:cssalonapp/widgets/CustomTextFormField.dart';
 import 'package:dropdown_formfield/dropdown_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class Signup extends StatefulWidget {
@@ -39,6 +42,7 @@ class SignupState extends State<Signup> {
   bool submitted;
   String mode;
   String profession;
+  Future<File> imageFile;
 
   @override
   void initState() {
@@ -89,13 +93,54 @@ class SignupState extends State<Signup> {
     description.unfocus();
   }
 
-  signup() async {
+  signup(BuildContext context) async {
     setState(() => isAutoSubmit = true);
     if (_formKey.currentState.validate()) {
-      _provider.createUser(usernameCtrl.text, phoneCtrl.text, surnameCtrl.text, emailCtrl.text,
-          passwordCtrl.text, mode, profession, descriptionCtrl.text);
-      Navigator.pop(context);
+      if (imageFile == null) {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text("Please upload a picture of your styles"),
+        ));
+        setState(() => submitted = false);
+      } else {
+        setState(() => submitted = true);
+        File file = await imageFile;
+        _provider.createUser(usernameCtrl.text, phoneCtrl.text, surnameCtrl.text, emailCtrl.text,
+            passwordCtrl.text, mode, profession, descriptionCtrl.text, file);
+        Navigator.pop(context);
+      }
     }
+  }
+
+  //Open gallery
+  pickImageFromGallery(ImageSource source) {
+    setState(() {
+      imageFile = ImagePicker.pickImage(source: source);
+    });
+  }
+
+  Widget showImage() {
+    return FutureBuilder<File>(
+      future: imageFile,
+      builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+          return Image.file(
+            snapshot.data,
+            width: 300,
+            height: 300,
+          );
+        } else if (snapshot.error != null) {
+          return const Text(
+            'Error Picking Image',
+            textAlign: TextAlign.center,
+          );
+        } else {
+          return const Text(
+            'No Image Selected',
+            textAlign: TextAlign.center,
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -269,7 +314,7 @@ class SignupState extends State<Signup> {
                               border: formOutlineBorder,
                               focusedBorder: formOutlineBorder,
                             ),
-                            maxLines: 4,
+                            maxLines: 3,
                             onSaved: (value) {
                               description.unfocus();
                             },
@@ -284,7 +329,7 @@ class SignupState extends State<Signup> {
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: CustomTextFormField(
                       isPassword: true,
-                      textInputAction: TextInputAction.done,
+                      textInputAction: TextInputAction.next,
                       controller: passwordCtrl,
                       focusNode: password,
                       validator: (value) => validation.validate("Password", value, TYPE.PASSWORD),
@@ -295,7 +340,31 @@ class SignupState extends State<Signup> {
                       textInputType: TextInputType.text,
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  Visibility(
+                    visible: mode != null && mode == 'Stylist',
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        showImage(),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: RaisedButton(
+                                  child: Text("Select Image from Gallery"),
+                                  onPressed: () {
+                                    pickImageFromGallery(ImageSource.gallery);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.0),
                       child: Button(
@@ -303,11 +372,8 @@ class SignupState extends State<Signup> {
                           width: double.infinity,
                           name: "Register Now",
                           onTap: () {
-                            setState(() {
-                              submitted = true;
-                            });
                             unFocus();
-                            signup();
+                            signup(context);
                           },
                           textStyle: loginButton,
                           loader: submitted

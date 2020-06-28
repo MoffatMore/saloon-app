@@ -3,7 +3,7 @@ class User {
   final String surname;
   final String imageUrl;
   final String id;
-  final bool admin;
+  final bool customer;
   final String email;
   final String phone;
 
@@ -14,17 +14,24 @@ class User {
     this.surname,
     this.imageUrl,
     this.id,
-    this.admin,
+    this.customer,
   });
 
   factory User.fromMap(Map map) {
     String username = map["username"];
     String surname = map["surname"];
+    String phone = map["phone"];
     String imageUrl = map["imageUrl"];
     String id = map["id"];
-    bool admin = map["admin"] == "true";
+    bool customer = map["mode"] == "Customer";
 
-    return User(admin: admin, username: username, id: id, imageUrl: imageUrl, surname: surname);
+    return User(
+        customer: customer,
+        username: username,
+        id: id,
+        imageUrl: imageUrl,
+        surname: surname,
+        phone: phone);
   }
 
   Map toMap() {
@@ -33,7 +40,7 @@ class User {
       "surname": surname,
       "imageUrl": imageUrl,
       "id": id,
-      "admin": admin.toString()
+      "customer": customer.toString()
     };
   }
 }
