@@ -4,7 +4,6 @@ import 'package:cssalonapp/pages/Blogs.dart';
 import 'package:cssalonapp/pages/ContactUs.dart';
 import 'package:cssalonapp/pages/HomeListView.dart';
 import 'package:cssalonapp/providers/auth.dart';
-import 'package:cssalonapp/widgets/BackGroundImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +13,6 @@ import 'appointments.dart';
 class Home extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return HomeState();
   }
 }
@@ -23,7 +21,6 @@ class HomeState extends State<Home> {
   AuthProvider _provider;
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     _provider = Provider.of<AuthProvider>(context);
   }
@@ -32,7 +29,7 @@ class HomeState extends State<Home> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60.0), // here the desired height
         child: AppBar(
@@ -55,7 +52,7 @@ class HomeState extends State<Home> {
         ),
       ),
       body: Stack(
-        children: <Widget>[BackGroundImage(image: "assets/images/icon.jpg"), HomeSection()],
+        children: <Widget>[HomeSection()],
       ),
     );
   }
@@ -76,7 +73,7 @@ class HomeSection extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           child: Text(
             "Make an Appointment",
-            style: TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black, fontSize: 18.0, fontWeight: FontWeight.bold),
           ),
         ),
         Expanded(
@@ -106,6 +103,7 @@ class HomeSection extends StatelessWidget {
             },
             child: Container(
               width: 200.0,
+              color: Colors.white30,
               child: Card(
                 child: Align(
                   alignment: Alignment.center,

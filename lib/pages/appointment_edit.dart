@@ -1,12 +1,14 @@
 import 'package:cssalonapp/Model/appointment.dart';
+import 'package:cssalonapp/pages/appointments.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:cssalonapp/providers/bookings.dart';
 import 'package:cssalonapp/widgets/ActionButton.dart';
 import 'package:cssalonapp/widgets/sizeConfig.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:rating_dialog/rating_dialog.dart';
+import 'package:quick_feedback/quick_feedback.dart';
 
 class AppointmentEditScreen extends StatefulWidget {
   final Appointment appointmentData;
@@ -118,6 +120,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
           child: Column(
             children: <Widget>[
               Stack(
+                fit: StackFit.loose,
                 children: <Widget>[
                   AnimatedContainer(
                     curve: isContainerCollapsed ? Curves.elasticIn : Curves.elasticOut,
@@ -132,24 +135,27 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 28.0),
-                          child: Container(
-                            //color: Colors.white,
-                            height: SizeConfig.safeBlockVertical * 19,
-                            width: SizeConfig.safeBlockHorizontal * 80,
-                            child: Center(
-                              child: AnimatedOpacity(
-                                duration: Duration(milliseconds: 375),
-                                opacity: isDateAndTimeVisible ? 1 : 0,
-                                child: Text(
-                                  selectedDate?.toLocal()?.toString() ??
-                                      widget.appointmentData.date,
-                                  style: TextStyle(
-                                      fontSize: SizeConfig.safeBlockHorizontal * 11,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 28.0),
+                            child: Container(
+                              //color: Colors.white,
+                              width: SizeConfig.safeBlockHorizontal * 80,
+                              child: Center(
+                                child: AnimatedOpacity(
+                                  duration: Duration(milliseconds: 375),
+                                  opacity: isDateAndTimeVisible ? 1 : 0,
+                                  child: Text(
+                                    selectedDate?.toLocal()?.toString() ??
+                                        widget.appointmentData.date ??
+                                        '',
+                                    style: TextStyle(
+                                        fontSize: SizeConfig.safeBlockHorizontal * 11,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ),
@@ -159,31 +165,10 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                     ),
                   ),
                   Container(
-                    height: SizeConfig.safeBlockVertical * 35,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 65.0),
                       child: Row(
                         children: <Widget>[
-//                          Align(
-//                            alignment: Alignment.bottomLeft,
-//                            child: AnimatedOpacity(
-//                              opacity: isUserProfileImageVisible ? 1 : 0,
-//                              duration: Duration(milliseconds: 300),
-//                              child: Container(
-//                                decoration: BoxDecoration(
-//                                  image: DecorationImage(
-//                                      image: CachedNetworkImageProvider(
-//                                          widget.appointmentData.imgLink),
-//                                      fit: BoxFit.fill),
-//                                  color: Colors.grey[200],
-//                                  border: Border.all(color: Colors.white, width: 5),
-//                                  borderRadius: BorderRadius.circular(35),
-//                                ),
-//                                height: SizeConfig.safeBlockVertical * 13,
-//                                width: SizeConfig.safeBlockHorizontal * 26,
-//                              ),
-//                            ),
-//                          ),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8.0, left: 18),
                             child: Align(
@@ -219,7 +204,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 65.0, top: 8, right: 22),
+                padding: const EdgeInsets.only(left: 65.0, top: 4, right: 22),
                 child: Transform.translate(
                   offset: Offset(0, tweenAnimation.value),
                   child: AnimatedOpacity(
@@ -274,8 +259,11 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              widget.appointmentData?.reSchedule != null
-                                  ? "Available slot \n" + widget.appointmentData?.reSchedule
+                              widget.appointmentData?.status == 're-schedule'
+                                  ? "Available slot \n" +
+                                      widget.appointmentData?.reSchedule +
+                                      ' '
+                                          '\n ${widget.appointmentData.comment}'
                                   : 'No Comments',
                               style: TextStyle(
                                   fontSize: SizeConfig.safeBlockHorizontal * 4.5,
@@ -316,11 +304,15 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                                       color: Theme.of(context).accentColor,
                                       borderRadius: BorderRadius.circular(30)),
                                   child: FlatButton(
-                                    child: Text(
-                                      "Rate Stylist",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    onPressed: _showRatingDialog,
+                                    child: isLoading
+                                        ? Center(
+                                            child: CupertinoActivityIndicator(),
+                                          )
+                                        : Text(
+                                            "Rate Stylist",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                    onPressed: () => _showFeedback(context),
                                   ),
                                 ),
                               )
@@ -339,32 +331,28 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
     );
   }
 
-  void _showRatingDialog() {
-    // We use the built in showDialog function to show our Rating Dialog
+  void _showFeedback(context) {
     showDialog(
-        context: context,
-        barrierDismissible: true, // set to false if you want to force a rating
-        builder: (context) {
-          return RatingDialog(
-            icon:
-                const FlutterLogo(size: 100, colors: Colors.red), // set your own image/icon widget
-            title: "Instyle Rating Dialog",
-            description: "Tap a star to set your rating. Add more description here if you want.",
-            submitButton: "SUBMIT", // optional
-            positiveComment: "We are so happy to hear :)", // optional
-            negativeComment: "We're sad to hear :(", // optional
-            accentColor: Colors.red, // optional
-            onSubmitPressed: (int rating) async {
-              await Bookings.rateBooking(
-                  rating, widget.appointmentData.docId, widget.appointmentData.myId);
-              reverseAnimation();
-            },
-            onAlternativePressed: () {
-              print("onAlternativePressed: do something");
-              // TODO: maybe you want the user to contact you instead of rating a bad review
-            },
-          );
-        });
+      context: context,
+      builder: (context) {
+        return QuickFeedback(
+          title: 'Leave a feedback', // Title of dialog
+          showTextBox: true, // default false
+          textBoxHint: 'Share your feedback', // Feedback text field hint text default: Tell us more
+          submitText: 'SUBMIT', // submit button text default: SUBMIT
+          onSubmitCallback: (feedback) {
+            Bookings.rateBooking(
+                feedback, widget.appointmentData.myId, widget.appointmentData.docId);
+            Navigator.of(context)
+                .pushReplacement(MaterialPageRoute(builder: (context) => AppointmentScreen()));
+          },
+          askLaterText: 'ASK LATER',
+          onAskLaterCallback: () {
+            print('Do something on ask later click');
+          },
+        );
+      },
+    );
   }
 
   openDatePicker(BuildContext context) async {

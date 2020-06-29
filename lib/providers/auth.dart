@@ -77,8 +77,17 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createUser(String username, String phone, String lastname, String email,
-      String password, String mode, String profession, String description, File image) async {
+  Future<void> createUser(
+      String username,
+      String phone,
+      String lastname,
+      String email,
+      String password,
+      String mode,
+      String profession,
+      String description,
+      File image,
+      String duration) async {
     signIn();
     try {
       email = email.trim();
@@ -102,16 +111,21 @@ class AuthProvider with ChangeNotifier {
 
           await storageReference.getDownloadURL().then((fileURL) {
             print('File Uploaded');
-            Firestore.instance.collection("profile").document(user.uid).setData({
-              "username": username,
-              "surname": lastname,
-              "phone": phone,
-              "id": user.uid,
-              'mode': mode,
-              'profession': profession,
-              'description': description,
-              'styles': fileURL
-            }).then((value) => signOut());
+            Firestore.instance
+                .collection('styles')
+                .add({'stylist': user.uid, 'picture': fileURL, 'duration': duration}).then(
+                    (value) => {
+                          print('style Uploaded'),
+                          Firestore.instance.collection("profile").document(user.uid).setData({
+                            "username": username,
+                            "surname": lastname,
+                            "phone": phone,
+                            "id": user.uid,
+                            'mode': mode,
+                            'profession': profession,
+                            'description': description,
+                          }).then((value) => signOut())
+                        });
           });
         }
       } else {
@@ -128,7 +142,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> uploadStyles(List<Asset> images) {
+  Future uploadStyles(List<Asset> images, String duration) {
     images.forEach((image) async {
       File file = await writeToFile(await image.getByteData(), image.name);
       StorageReference storageReference =
@@ -136,12 +150,12 @@ class AuthProvider with ChangeNotifier {
       StorageUploadTask uploadTask = storageReference.putFile(file);
       await uploadTask.onComplete;
 
-      await storageReference.getDownloadURL().then((fileURL) {
+      return storageReference.getDownloadURL().then((fileURL) {
         print('File Uploaded');
         Firestore.instance
             .collection("styles")
             .document()
-            .setData({"stylist": currentUser.id, 'picture': fileURL});
+            .setData({"stylist": currentUser.id, 'picture': fileURL, 'duration': duration});
       });
     });
   }

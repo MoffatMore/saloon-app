@@ -1,7 +1,10 @@
 List<Map> homeListViewSection = [
-  {"name": "Hair Care", "image": "assets/images/home/hairCare.jpg"},
-  {"name": "Make Up", "image": "assets/images/home/makeUp.jpg"},
-  {"name": "Bridal", "image": "assets/images/home/bridal.jpg"},
+  {"name": "Braids", "image": "assets/images/home/hairCare.jpg"},
+  {"name": "Weaves", "image": "assets/images/home/makeUp.jpg"},
+  {"name": "Cornrows", "image": "assets/images/home/bridal.jpg"},
+  {"name": "Crochet", "image": "assets/images/home/bridal.jpg"},
+  {"name": "Hair cuts", "image": "assets/images/home/bridal.jpg"},
+  {"name": "Dreads", "image": "assets/images/home/bridal.jpg"},
 ];
 
 List<Map> homeListHeaderSection = [

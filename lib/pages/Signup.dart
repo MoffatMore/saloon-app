@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:cool_alert/cool_alert.dart';
 import 'package:cssalonapp/Model/Validation.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:cssalonapp/theme/Color.dart';
 import 'package:cssalonapp/theme/CustomStyle.dart';
-import 'package:cssalonapp/widgets/BackGroundImage.dart';
 import 'package:cssalonapp/widgets/CustomButton.dart';
 import 'package:cssalonapp/widgets/CustomLogo.dart';
 import 'package:cssalonapp/widgets/CustomTextFormField.dart';
@@ -38,6 +38,7 @@ class SignupState extends State<Signup> {
   TextEditingController surnameCtrl;
   TextEditingController phoneCtrl;
   TextEditingController descriptionCtrl;
+  TextEditingController durationCtrl;
   AuthProvider _provider;
   bool submitted;
   String mode;
@@ -59,6 +60,8 @@ class SignupState extends State<Signup> {
     surnameCtrl = TextEditingController();
     phoneCtrl = TextEditingController();
     descriptionCtrl = TextEditingController();
+    durationCtrl = TextEditingController();
+
     submitted = false;
   }
 
@@ -81,6 +84,7 @@ class SignupState extends State<Signup> {
     usernameCtrl?.dispose();
     surnameCtrl?.dispose();
     phoneCtrl?.dispose();
+    durationCtrl?.dispose();
     super.dispose();
   }
 
@@ -96,16 +100,40 @@ class SignupState extends State<Signup> {
   signup(BuildContext context) async {
     setState(() => isAutoSubmit = true);
     if (_formKey.currentState.validate()) {
-      if (imageFile == null) {
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text("Please upload a picture of your styles"),
-        ));
+      if (imageFile == null && mode == 'Stylist') {
+        CoolAlert.show(
+          context: context,
+          type: CoolAlertType.error,
+          title: "Image empty",
+          text: "You must specify any picture of your works",
+        );
         setState(() => submitted = false);
+      } else if (mode == null) {
+        CoolAlert.show(
+          context: context,
+          type: CoolAlertType.error,
+          title: "User Mode Empty",
+          text: "You must specify user mode first",
+        );
+      } else if (mode == null) {
+        CoolAlert.show(
+          context: context,
+          type: CoolAlertType.error,
+          title: "User Mode Empty",
+          text: "You must specify user mode first",
+        );
+      } else if (durationCtrl.text == '' && mode == 'Stylist') {
+        CoolAlert.show(
+          context: context,
+          type: CoolAlertType.error,
+          title: "Duration empty",
+          text: "You must specify duration first",
+        );
       } else {
         setState(() => submitted = true);
         File file = await imageFile;
         _provider.createUser(usernameCtrl.text, phoneCtrl.text, surnameCtrl.text, emailCtrl.text,
-            passwordCtrl.text, mode, profession, descriptionCtrl.text, file);
+            passwordCtrl.text, mode, profession, descriptionCtrl.text, file, durationCtrl.text);
         Navigator.pop(context);
       }
     }
@@ -149,9 +177,6 @@ class SignupState extends State<Signup> {
       key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
-          BackGroundImage(
-            image: "assets/images/home/makeUp.jpg",
-          ),
           SafeArea(
               child: Form(
             autovalidate: isAutoSubmit,
@@ -286,10 +311,11 @@ class SignupState extends State<Signup> {
                         valueField: 'value',
                         required: true,
                         dataSource: [
-                          {'display': 'Hair Care', 'value': 'Hair Care'},
-                          {'display': 'Make Up Artist', 'value': 'Make Up'},
-                          {'display': 'Bridal', 'value': 'Bridal'},
-                          {'display': 'Nail Technician', 'value': 'Nail Technician'},
+                          {'display': 'Braids', 'value': 'Braids'},
+                          {'display': 'Weaves', 'value': 'Weaves'},
+                          {'display': 'Cornrows', 'value': 'Cornrows'},
+                          {'display': 'Crotchet', 'value': 'Crotchet'},
+                          {'display': 'Dreads', 'value': 'Dreads'},
                         ],
                       ),
                     ),
@@ -364,6 +390,23 @@ class SignupState extends State<Signup> {
                       ],
                     ),
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Visibility(
+                    visible: imageFile != null,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: CustomTextFormField(
+                        textInputAction: TextInputAction.next,
+                        controller: durationCtrl,
+                        validator: (value) => validation.validate("duration", value, TYPE.TEXT),
+                        hintText: "Duration (Hrs&mins)",
+                        onSubmitted: (value) {},
+                        textInputType: TextInputType.text,
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 10.0),
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -426,7 +469,7 @@ class SignupState extends State<Signup> {
           ),
           Text(
             "Register now",
-            style: TextStyle(fontSize: 23.0, color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 23.0, color: Colors.black, fontWeight: FontWeight.bold),
           ),
           Container(
             width: MediaQuery.of(context).size.width / 4.5,

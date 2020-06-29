@@ -7,7 +7,8 @@ class Appointment {
       this.phoneNumber,
       this.docId,
       this.review,
-      this.reSchedule});
+      this.reSchedule,
+      this.comment});
 
   String date, phoneNumber;
   String myId;
@@ -17,4 +18,5 @@ class Appointment {
   String reSchedule;
   String review;
   bool isFuture;
+  String comment;
 }

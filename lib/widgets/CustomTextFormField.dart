@@ -49,7 +49,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       decoration: InputDecoration(
         contentPadding: EdgeInsets.all(15.0),
         hintText: widget.hintText,
-        fillColor: Colors.white,
+        fillColor: Colors.grey.shade200,
         filled: true,
         enabled: widget.enabled,
         enabledBorder: formOutlineBorder,

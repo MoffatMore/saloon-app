@@ -55,7 +55,7 @@ class MyMiniAppointmentCard extends StatelessWidget {
                         width: SizeConfig.safeBlockHorizontal * 90,
                         //color: Colors.pink,
                         child: Text(
-                          'Date: ' + appointmentData.date,
+                          'Date: ${appointmentData?.date ?? ''}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: SizeConfig.safeBlockHorizontal * 4.0,

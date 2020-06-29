@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Bookings {
+  var temp_rating;
+
   static book(
       {String stylist,
       String customerUid,
@@ -55,7 +57,34 @@ class Bookings {
 
   static Future<void> acceptBooking(String docId) {}
 
-  static Future<void> rateBooking(int rating, String docId, String stylist) {
+  static Future rateBooking(Map rating, String username, String appID) async {
+    await Firestore.instance
+        .collection("profile")
+        .where("username", isEqualTo: username)
+        .getDocuments()
+        .then((value) => {
+              Firestore.instance
+                  .collection('profile')
+                  .document(value.documents[0].documentID)
+                  .collection('ratings')
+                  .document()
+                  .setData(rating)
+            });
+    log(appID.toString());
+    Firestore.instance.collection('bookings').document(appID).updateData({
+      'review': 'accepted',
+      'status': 'reviewed',
+    });
+
     log("onSubmitPressed: rating = $rating");
+  }
+
+  static void schedule({String comment, String date, String docID}) {
+    Map<String, dynamic> data = {
+      'comment': comment,
+      'schedule-date': date,
+      'status': 're-schedule'
+    };
+    Firestore.instance.collection('bookings').document(docID).updateData(data);
   }
 }

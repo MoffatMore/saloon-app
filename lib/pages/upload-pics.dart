@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class _UploadPicturesState extends State<UploadPictures> {
   String _error;
   AuthProvider _authProvider;
   bool isLoading = false;
+  TextEditingController controller = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -35,6 +37,7 @@ class _UploadPicturesState extends State<UploadPictures> {
     List<String> list = List<String>();
     int _current = 0;
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text("Upload your styles"),
       ),
@@ -52,21 +55,26 @@ class _UploadPicturesState extends State<UploadPictures> {
                       });
                     }
                   }
-                  return CarouselSlider(
-                    options: CarouselOptions(
-                        autoPlay: true,
-                        enlargeCenterPage: true,
-                        aspectRatio: 2.0,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            _current = index;
-                          });
-                        }),
-                    items: list
-                        .map((item) => Container(
-                              child: Image.network(item),
-                            ))
-                        .toList(),
+                  return Container(
+                    color: Colors.grey.shade300,
+                    padding: EdgeInsets.all(10),
+                    margin: EdgeInsets.symmetric(horizontal: 30),
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                          autoPlay: true,
+                          enlargeCenterPage: true,
+                          aspectRatio: 2.0,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              _current = index;
+                            });
+                          }),
+                      items: list
+                          .map((item) => Container(
+                                child: Image.network(item),
+                              ))
+                          .toList(),
+                    ),
                   );
                 }),
             Row(
@@ -96,39 +104,57 @@ class _UploadPicturesState extends State<UploadPictures> {
               child: buildGridView(),
             )),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Visibility(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: <Widget>[
+                    Visibility(
                       visible: images != null && images.length > 0,
                       child: Container(
-                        child: FlatButton(
-                          child: Text("Clear pictures", style: TextStyle(color: Colors.white)),
-                          onPressed: unLoadAssets,
+                        child: TextFormField(
+                          decoration: InputDecoration(helperText: "Duration (Hrs:mins)"),
+                          keyboardType: TextInputType.text,
+                          controller: controller,
                         ),
-                        margin: EdgeInsets.only(bottom: 140),
-                        decoration: BoxDecoration(
-                            color: Colors.grey, borderRadius: BorderRadius.circular(10)),
-                      )),
-                  Visibility(
-                      visible: images != null && images.length > 0,
-                      child: Container(
-                        child: FlatButton(
-                          child: isLoading
-                              ? Center(
-                                  child: CupertinoActivityIndicator(),
-                                )
-                              : Text("Upload pictures", style: TextStyle(color: Colors.white)),
-                          onPressed: upload,
-                        ),
-                        margin: EdgeInsets.only(bottom: 140),
-                        decoration: BoxDecoration(
-                            color: Colors.blue, borderRadius: BorderRadius.circular(10)),
-                      ))
-                ],
-              ),
-            )
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Visibility(
+                            visible: images != null && images.length > 0,
+                            child: Container(
+                              child: FlatButton(
+                                child:
+                                    Text("Clear pictures", style: TextStyle(color: Colors.white)),
+                                onPressed: unLoadAssets,
+                              ),
+                              margin: EdgeInsets.only(bottom: 140),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey, borderRadius: BorderRadius.circular(10)),
+                            )),
+                        Visibility(
+                            visible: images != null && images.length > 0,
+                            child: Container(
+                              child: FlatButton(
+                                child: isLoading
+                                    ? Center(
+                                        child: CupertinoActivityIndicator(),
+                                      )
+                                    : Text("Upload pictures",
+                                        style: TextStyle(color: Colors.white)),
+                                onPressed: upload,
+                              ),
+                              margin: EdgeInsets.only(bottom: 140),
+                              decoration: BoxDecoration(
+                                  color: Colors.blue, borderRadius: BorderRadius.circular(10)),
+                            ))
+                      ],
+                    ),
+                  ],
+                ))
           ],
         ),
       ),
@@ -196,15 +222,25 @@ class _UploadPicturesState extends State<UploadPictures> {
     });
   }
 
-  Future<void> upload() async {
-    setState(() {
-      isLoading = true;
-    });
-    await _authProvider.uploadStyles(images);
-    setState(() {
-      isLoading = false;
-      images = null;
-    });
+  Future<void> upload() {
+    if (controller.text != null && controller.text != '') {
+      setState(() {
+        isLoading = true;
+      });
+      _authProvider.uploadStyles(images, controller.text).then((_) => {
+            setState(() {
+              isLoading = false;
+              images = null;
+            })
+          });
+    } else {
+      CoolAlert.show(
+        context: context,
+        type: CoolAlertType.error,
+        title: "Duration empty",
+        text: "You must specify duration first",
+      );
+    }
   }
 
   Widget showImage() {

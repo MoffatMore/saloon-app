@@ -54,7 +54,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       isFirstTime = true;
     }
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white70,
         appBar: AppBar(
           elevation: 0,
           title: Text('My Appointments'),
@@ -70,12 +70,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       if (!snapshot.hasData) {
                         return Center(child: Container(child: Text("No appointments")));
                       }
-
                       return ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (BuildContext context, int index) {
-                          developer.log(snapshot.data.documents[index].toString());
                           var app = Appointment(
                               date: snapshot.data.documents[index]['date'],
                               myId: snapshot.data.documents[index]['stylist'],
@@ -83,8 +81,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               phoneNumber: snapshot.data.documents[index]['phoneNumber'],
                               status: snapshot.data.documents[index]['status'],
                               reSchedule: snapshot.data.documents[index]['schedule-date'],
+                              comment: snapshot.data.documents[index]['comment'],
                               review: snapshot.data.documents[index]['review'],
                               docId: snapshot.data.documents[index].documentID);
+                          developer.log('review ${app.review?.toString()}');
                           return AnimationConfiguration.staggeredList(
                             position: index,
                             duration: Duration(milliseconds: 375),

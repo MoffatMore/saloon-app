@@ -48,7 +48,7 @@ class Blogs extends StatelessWidget {
                                       tag: index,
                                       child: Container(
                                         margin: EdgeInsets.all(0.0),
-                                        width: 150.0,
+                                        width: 130.0,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(4.0),
                                           child: Image.asset(
@@ -121,12 +121,13 @@ class Blogs extends StatelessWidget {
                                                     color: Colors.redAccent,
                                                     borderRadius: BorderRadius.circular(30)),
                                                 height: 30,
-                                                width: 80,
+                                                width: 70,
                                               ),
                                               SizedBox(
-                                                width: 10,
+                                                width: 5,
                                               ),
                                               Container(
+                                                width: 100,
                                                 child: FlatButton(
                                                   onPressed: () {
                                                     Navigator.push(

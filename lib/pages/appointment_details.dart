@@ -1,6 +1,7 @@
 import 'package:cssalonapp/Model/appointment.dart';
+import 'package:cssalonapp/pages/custom-action.dart';
+import 'package:cssalonapp/pages/re-schedule.dart';
 import 'package:cssalonapp/providers/bookings.dart';
-import 'package:cssalonapp/widgets/ActionButton.dart';
 import 'package:cssalonapp/widgets/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -107,6 +108,15 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
     reverseAnimation();
   }
 
+  void declineAppointment(Appointment appointmentData) async {
+    Map<String, dynamic> data = {'status': 'declined'};
+    setState(() {
+      isLoading = true;
+    });
+    await Bookings.editBooking(data, appointmentData.docId);
+    reverseAnimation();
+  }
+
   sendReview() {
     setState(() {
       isLoading = true;
@@ -124,14 +134,25 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
       bottomNavigationBar: AnimatedOpacity(
         duration: Duration(milliseconds: 230),
         opacity: isContainerCollapsed ? 0 : 1,
-        child: ActionButton(
+        child: CustomActionButton(
           visible: widget.appointmentData?.review == null,
           isLoading: isLoading,
-          value1: widget.appointmentData.status == 'accepted' ? 'send review link' : 'accept',
+          value1: widget.appointmentData.status == 'accepted' ? 'review link' : 'accept',
+          value2: "Cancel",
           onAcceptPressed: () =>
               widget.appointmentData.status == 'accepted' ? sendReview() : acceptBooking(),
           onDecinePressed: () {
-            openDatePicker(context);
+            declineAppointment(widget.appointmentData);
+          },
+          onReschedulePressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ReBooking(
+                          title: "Schedule",
+                          app: widget.appointmentData,
+                        )));
+            reverseAnimation();
           },
         ),
       ),
@@ -166,7 +187,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                                 duration: Duration(milliseconds: 375),
                                 opacity: isDateAndTimeVisible ? 1 : 0,
                                 child: Text(
-                                  widget.appointmentData.date,
+                                  '${widget.appointmentData.date}',
                                   style: TextStyle(
                                       fontSize: SizeConfig.safeBlockHorizontal * 11,
                                       fontWeight: FontWeight.w500,

@@ -17,70 +17,70 @@ class MiniAppointmentCard extends StatelessWidget {
       onTap: () {
         onCardTapped();
       },
-      child: Card(
-        elevation: 0.3,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: Container(
-          width: SizeConfig.horizontalBloc * 50,
-          height: SizeConfig.verticalBloc * 10.7,
-          decoration:
-              BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(10)),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Row(
-              children: <Widget>[
-                SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  flex: 10,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        height: SizeConfig.safeBlockVertical * 3,
-                        width: SizeConfig.safeBlockHorizontal * 90,
-                        //color: Colors.yellow,
-                        child: Text(
-                          'Stylist Name: ' + appointmentData.myId,
-                          style: TextStyle(
-                              fontSize: SizeConfig.safeBlockHorizontal * 4,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87),
-                        ),
-                      ),
-                      Container(
-                        height: SizeConfig.safeBlockVertical * 3,
-                        width: SizeConfig.safeBlockHorizontal * 90,
-                        //color: Colors.pink,
-                        child: Text(
-                          'Date: ' + appointmentData.date,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: SizeConfig.safeBlockHorizontal * 4.0,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: SizeConfig.safeBlockVertical * 3,
-                        width: SizeConfig.safeBlockHorizontal * 90,
-                        //color: Colors.pink,
-                        child: Text(
-                          'Status: ' + (appointmentData.status ?? 'Pending'),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: SizeConfig.safeBlockHorizontal * 4.0,
-                          ),
-                        ),
-                      ),
-                    ],
+      child: Container(
+        width: SizeConfig.horizontalBloc * 50,
+        height: SizeConfig.verticalBloc * 10.7,
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        decoration:
+            BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
+        child: Card(
+            elevation: 0.3,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: 10,
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
+                  Expanded(
+                    flex: 10,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          height: SizeConfig.safeBlockVertical * 3,
+                          width: SizeConfig.safeBlockHorizontal * 90,
+                          //color: Colors.yellow,
+                          child: Text(
+                            'Stylist Name: ' + appointmentData.myId,
+                            style: TextStyle(
+                                fontSize: SizeConfig.safeBlockHorizontal * 4,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87),
+                          ),
+                        ),
+                        Container(
+                          height: SizeConfig.safeBlockVertical * 3,
+                          width: SizeConfig.safeBlockHorizontal * 90,
+                          //color: Colors.pink,
+                          child: Text(
+                            'Date: ${appointmentData?.date}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConfig.safeBlockHorizontal * 4.0,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: SizeConfig.safeBlockVertical * 3,
+                          width: SizeConfig.safeBlockHorizontal * 90,
+                          //color: Colors.pink,
+                          child: Text(
+                            'Status: ' + (appointmentData.status ?? 'Pending'),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConfig.safeBlockHorizontal * 4.0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )),
       ),
     );
   }

@@ -3,7 +3,6 @@ import 'package:cssalonapp/pages/Signup.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:cssalonapp/theme/Color.dart';
 import 'package:cssalonapp/theme/CustomStyle.dart';
-import 'package:cssalonapp/widgets/BackGroundImage.dart';
 import 'package:cssalonapp/widgets/CustomButton.dart';
 import 'package:cssalonapp/widgets/CustomLogo.dart';
 import 'package:cssalonapp/widgets/CustomTextFormField.dart';
@@ -72,12 +71,8 @@ class LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.black87,
       body: Stack(
         children: <Widget>[
-          BackGroundImage(
-            image: "assets/images/home/makeUp.jpg",
-          ),
           SafeArea(
               child: Form(
             key: _formKey,
@@ -149,7 +144,7 @@ class LoginState extends State<Login> {
                       children: <Widget>[
                         Text(
                           "New User ?",
-                          style: TextStyle(color: Colors.white, fontSize: 16.0),
+                          style: TextStyle(color: Colors.black, fontSize: 16.0),
                         ),
                         SizedBox(
                           width: 10.0,
@@ -162,7 +157,7 @@ class LoginState extends State<Login> {
                           child: Text(
                             "Register Now",
                             style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.white),
+                                fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
                           ),
                         )
                       ],
@@ -190,7 +185,7 @@ class LoginState extends State<Login> {
           ),
           Text(
             "Login",
-            style: TextStyle(fontSize: 23.0, color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 23.0, color: Colors.black, fontWeight: FontWeight.bold),
           ),
           Container(
             width: MediaQuery.of(context).size.width / 3.5,
