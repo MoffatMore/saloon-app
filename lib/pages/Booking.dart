@@ -9,13 +9,15 @@ import 'package:cssalonapp/widgets/loading_screen.dart';
 import 'package:dropdown_formfield/dropdown_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 
 class Booking extends StatefulWidget {
   String title;
+  String stylist;
 
-  Booking({this.title});
+  Booking({this.title, this.stylist});
 
   @override
   State<StatefulWidget> createState() {
@@ -31,6 +33,7 @@ class BookingState extends State<Booking> {
   FocusNode stylist;
   FocusNode phoneNumber;
   TextEditingController stylistCtrl;
+  TextEditingController customerCtrl;
   TextEditingController phoneCtrl;
   String _chosen = '';
   bool isAutoValid = false;
@@ -39,19 +42,18 @@ class BookingState extends State<Booking> {
   AuthProvider _auth;
   bool isLoading = false;
 
-  openDatePciekr(BuildContext context) async {
-    DateTime pickeed = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
-      lastDate: DateTime(DateTime.now().year + 1),
-    );
-    if (pickeed != null) {
+  openDatePicker(BuildContext context) async {
+    DatePicker.showDateTimePicker(context,
+        showTitleActions: true,
+        minTime: DateTime.now(),
+        maxTime: DateTime.now().add(new Duration(days: 365)), onChanged: (date) {
+      print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+    }, onConfirm: (date) {
       setState(() {
-        selectedDate = pickeed;
+        selectedDate = date;
       });
-    }
-    print(pickeed);
+      print('confirm $date');
+    }, locale: LocaleType.en);
   }
 
   @override
@@ -61,26 +63,30 @@ class BookingState extends State<Booking> {
     phoneNumber = FocusNode();
     username = FocusNode();
     stylistCtrl = TextEditingController();
+    customerCtrl = TextEditingController();
     phoneCtrl = TextEditingController();
   }
 
   onSubmit() {
     if (_formKey.currentState.validate()) {
+      unFocus();
       setState(() {
         isLoading = true;
       });
+
       Bookings.book(
-          customerName: _auth.currentUser.username.toString(),
+          customerName: customerCtrl.text,
           customerPhone: phoneCtrl.text,
           customerUid: _auth.currentUser.id.toString(),
-          date: selectedDate?.toString()?.split(' ')[0],
-          stylist: _chosen,
+          date: selectedDate?.toString(),
+          stylist: widget.stylist != null ? widget.stylist : _chosen,
           reason: widget.title);
       setState(() {
         isLoading = false;
       });
       Toast.show("Successfully booked for appointment", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      Navigator.pop(context);
     }
   }
 
@@ -107,11 +113,11 @@ class BookingState extends State<Booking> {
     _auth = Provider.of<AuthProvider>(context);
     phoneCtrl.text = _auth.currentUser.phone;
     stylistCtrl.text = _auth.currentUser.username;
+    stylistCtrl.text = widget.stylist;
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: PreferredSize(
@@ -145,7 +151,7 @@ class BookingState extends State<Booking> {
                             CustomTextFormField(
                               focusNode: username,
                               validator: (val) => validation.validate("Username", val, TYPE.TEXT),
-                              controller: stylistCtrl,
+                              controller: customerCtrl,
                               hintText: "Username",
                               onSubmitted: (val) {
                                 username.unfocus();
@@ -157,46 +163,55 @@ class BookingState extends State<Booking> {
                             SizedBox(
                               height: 10.0,
                             ),
-                            StreamBuilder<QuerySnapshot>(
-                                stream: Bookings.getHairCareStyList(widget.title),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Container(
-                                      child: Center(
-                                        child: CupertinoActivityIndicator(),
-                                      ),
-                                    );
-                                  }
-                                  List hairCareStylist = List();
-                                  for (int i = 0; i < snapshot.data.documents.length; i++) {
-                                    hairCareStylist.add({
-                                      'display': snapshot.data.documents[i]['username'],
-                                      'value': snapshot.data.documents[i]['username'],
-                                    });
-                                  }
-                                  return Container(
-                                    color: Colors.white,
-                                    child: DropDownFormField(
-                                      titleText: 'My ${widget.title} stylist',
-                                      hintText: 'Please choose one',
-                                      value: _chosen,
-                                      onSaved: (value) {
-                                        setState(() {
-                                          _chosen = value;
+                            widget.stylist != null
+                                ? CustomTextFormField(
+                                    controller: stylistCtrl,
+                                    enabled: false,
+                                    hintText: "Stylist",
+                                    validator: (value) {},
+                                    textInputType: TextInputType.text,
+                                    textInputAction: TextInputAction.done,
+                                  )
+                                : StreamBuilder<QuerySnapshot>(
+                                    stream: Bookings.getHairCareStyList(widget.title),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Container(
+                                          child: Center(
+                                            child: CupertinoActivityIndicator(),
+                                          ),
+                                        );
+                                      }
+                                      List hairCareStylist = List();
+                                      for (int i = 0; i < snapshot.data.documents.length; i++) {
+                                        hairCareStylist.add({
+                                          'display': snapshot.data.documents[i]['username'],
+                                          'value': snapshot.data.documents[i]['username'],
                                         });
-                                      },
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _chosen = value;
-                                        });
-                                      },
-                                      textField: 'display',
-                                      valueField: 'value',
-                                      required: true,
-                                      dataSource: hairCareStylist,
-                                    ),
-                                  );
-                                }),
+                                      }
+                                      return Container(
+                                        color: Colors.white,
+                                        child: DropDownFormField(
+                                          titleText: 'My ${widget.title} stylist',
+                                          hintText: 'Please choose one',
+                                          value: _chosen,
+                                          onSaved: (value) {
+                                            setState(() {
+                                              _chosen = value;
+                                            });
+                                          },
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _chosen = value;
+                                            });
+                                          },
+                                          textField: 'display',
+                                          valueField: 'value',
+                                          required: true,
+                                          dataSource: hairCareStylist,
+                                        ),
+                                      );
+                                    }),
                             SizedBox(
                               height: 10.0,
                             ),
@@ -217,7 +232,7 @@ class BookingState extends State<Booking> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                openDatePciekr(context);
+                                openDatePicker(context);
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(5.0),
@@ -228,7 +243,7 @@ class BookingState extends State<Booking> {
                                   color: Colors.white,
                                   padding: EdgeInsets.all(10.0),
                                   child: Text((selectedDate != null)
-                                      ? getDate(selectedDate)
+                                      ? selectedDate.toLocal().toString()
                                       : "Select Date"),
                                 ),
                               ),
@@ -266,6 +281,7 @@ class BookingState extends State<Booking> {
   }
 
   String getDate(DateTime time) {
-    return "${time.day}/${time.month}/${time.year}";
+    double _time = double.parse("${time.hour}.${time.minute}");
+    return "${time.day}/${time.month}/${time.year} ${_time}  ${time.weekday}";
   }
 }

@@ -25,7 +25,7 @@ class CustomLogo extends StatelessWidget {
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                "Bonno's Beauty Parlor",
+                "Instyle Saloon",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: primaryColor, fontSize: 30, fontWeight: FontWeight.bold),
               ),

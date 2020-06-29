@@ -1,70 +1,107 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cssalonapp/providers/bookings.dart';
 import 'package:cssalonapp/widgets/BackGroundImage.dart';
 import 'package:flutter/material.dart';
 
-class BlogDetails extends StatelessWidget {
+class BlogDetails extends StatefulWidget {
   String image;
   String title;
   String blog;
   int index;
+  String uid;
 
-  BlogDetails({this.index, this.title, this.image, this.blog});
+  BlogDetails({this.index, this.title, this.image, this.blog, this.uid});
 
   @override
+  _BlogDetailsState createState() => _BlogDetailsState();
+}
+
+class _BlogDetailsState extends State<BlogDetails> {
+  @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    List<String> list = List<String>();
+    int _current = 0;
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        elevation: 0.0,
+      ),
       body: Stack(
         children: <Widget>[
           BackGroundImage(
-            image: "assets/images/image1.jpg",
+            image: "assets/images/icon.jpg",
           ),
           Column(
             children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  Hero(
-                    tag: index,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height / 3,
-                      width: double.infinity,
-                      child: Image.asset(
-                        image,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  AppBar(
-                    backgroundColor: Colors.transparent,
-                    elevation: 0.0,
-                  )
-                ],
-              ),
               Expanded(
                   child: Container(
                 margin: EdgeInsets.all(20.0),
                 width: double.infinity,
-                color: Colors.white,
+                color: Colors.transparent,
                 child: Column(
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
                       child: Text(
-                        title,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
+                        'Hair Styles made by ${widget.title}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 24.0, color: Colors.white),
                       ),
                     ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Text(
-                            blogData,
-                            style: TextStyle(fontSize: 15.0),
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      color: Colors.white,
+                      height: 220,
+                      child: Column(
+                        children: <Widget>[
+                          StreamBuilder<QuerySnapshot>(
+                              stream: Bookings.getHairStyles(widget.uid),
+                              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (snapshot.hasData) {
+                                  if (snapshot.data.documents.length > 0) {
+                                    snapshot.data.documents.forEach((document) {
+                                      list.add(document['picture']);
+                                    });
+                                  }
+                                }
+                                return CarouselSlider(
+                                  options: CarouselOptions(
+                                      autoPlay: true,
+                                      enlargeCenterPage: true,
+                                      aspectRatio: 2.0,
+                                      onPageChanged: (index, reason) {
+                                        setState(() {
+                                          _current = index;
+                                        });
+                                      }),
+                                  items: list
+                                      .map((item) => Container(
+                                            child: Image.network(item),
+                                          ))
+                                      .toList(),
+                                );
+                              }),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: list.map((url) {
+                              int index = list.indexOf(url);
+                              return Container(
+                                width: 8.0,
+                                height: 8.0,
+                                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _current == index
+                                      ? Color.fromRGBO(0, 0, 0, 0.9)
+                                      : Color.fromRGBO(0, 0, 0, 0.4),
+                                ),
+                              );
+                            }).toList(),
                           ),
-                        ),
+                        ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ))

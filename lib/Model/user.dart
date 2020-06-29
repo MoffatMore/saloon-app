@@ -6,16 +6,21 @@ class User {
   final bool customer;
   final String email;
   final String phone;
+  final String profession;
+  final String description;
+  final String mode;
 
-  User({
-    this.email,
-    this.phone,
-    this.username,
-    this.surname,
-    this.imageUrl,
-    this.id,
-    this.customer,
-  });
+  User(
+      {this.email,
+      this.phone,
+      this.username,
+      this.surname,
+      this.imageUrl,
+      this.id,
+      this.customer,
+      this.profession,
+      this.description,
+      this.mode});
 
   factory User.fromMap(Map map) {
     String username = map["username"];
@@ -24,6 +29,9 @@ class User {
     String imageUrl = map["imageUrl"];
     String id = map["id"];
     bool customer = map["mode"] == "Customer";
+    String profession = map["profession"];
+    String description = map["description"];
+    String mode = map["mode"];
 
     return User(
         customer: customer,
@@ -31,7 +39,10 @@ class User {
         id: id,
         imageUrl: imageUrl,
         surname: surname,
-        phone: phone);
+        phone: phone,
+        description: description,
+        profession: profession,
+        mode: mode);
   }
 
   Map toMap() {

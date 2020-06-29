@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 typedef SubmitCallback(String value);
 
-class CustomTextFormField extends StatelessWidget {
+class CustomTextFormField extends StatefulWidget {
   String hintText;
   FocusNode focusNode;
   TextEditingController controller;
@@ -12,7 +12,7 @@ class CustomTextFormField extends StatelessWidget {
   TextInputAction textInputAction;
   TextInputType textInputType;
   bool isPassword = false;
-  String value;
+  bool enabled = true;
 
   CustomTextFormField(
       {this.textInputType,
@@ -22,27 +22,36 @@ class CustomTextFormField extends StatelessWidget {
       this.onSubmitted,
       this.validator,
       this.hintText,
-      this.isPassword = false});
+      this.isPassword = false,
+      this.enabled = true});
+
+  @override
+  _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
+}
+
+class _CustomTextFormFieldState extends State<CustomTextFormField> {
+  String value;
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return TextFormField(
       initialValue: value,
-      obscureText: isPassword,
-      keyboardType: textInputType,
+      obscureText: widget.isPassword,
+      keyboardType: widget.textInputType,
       validator: (value) {
-        return validator(value);
+        return widget.validator(value);
       },
-      onFieldSubmitted: onSubmitted,
-      focusNode: focusNode,
-      controller: controller,
-      textInputAction: textInputAction,
+      onFieldSubmitted: widget.onSubmitted,
+      focusNode: widget.focusNode,
+      controller: widget.controller,
+      textInputAction: widget.textInputAction,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.all(15.0),
-        hintText: hintText,
+        hintText: widget.hintText,
         fillColor: Colors.white,
         filled: true,
+        enabled: widget.enabled,
         enabledBorder: formOutlineBorder,
         border: formOutlineBorder,
         focusedBorder: formOutlineBorder,

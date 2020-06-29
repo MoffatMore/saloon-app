@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cssalonapp/pages/BlogDetails.dart';
+import 'package:cssalonapp/pages/Booking.dart';
 import 'package:cssalonapp/providers/bookings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,19 +33,7 @@ class Blogs extends StatelessWidget {
                   child: ListView.separated(
                       itemBuilder: (context, index) {
                         return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlogDetails(
-                                  index: index,
-                                  image: "assets/images/user.jpg",
-                                  blog: blogDetails,
-                                  title: "Job Description",
-                                ),
-                              ),
-                            );
-                          },
+                          onTap: () {},
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                             child: ClipRRect(
@@ -107,6 +96,65 @@ class Blogs extends StatelessWidget {
                                             snapshot.data.documents[index]['description'] ??
                                                 'No job description',
                                             maxLines: 5,
+                                          ),
+                                          SizedBox(
+                                            height: 20.0,
+                                          ),
+                                          Row(
+                                            children: <Widget>[
+                                              Container(
+                                                child: FlatButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).push(MaterialPageRoute(
+                                                        builder: (context) => Booking(
+                                                            title: "Book "
+                                                                "Stylist",
+                                                            stylist: snapshot.data.documents[index]
+                                                                ['username'])));
+                                                  },
+                                                  child: Text(
+                                                    "Book",
+                                                    style: TextStyle(color: Colors.white),
+                                                  ),
+                                                ),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.redAccent,
+                                                    borderRadius: BorderRadius.circular(30)),
+                                                height: 30,
+                                                width: 80,
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Container(
+                                                child: FlatButton(
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) => BlogDetails(
+                                                          index: index,
+                                                          uid: snapshot
+                                                              .data.documents[index].documentID,
+                                                          image: "assets/images/user.jpg",
+                                                          blog: blogDetails,
+                                                          title: snapshot.data.documents[index]
+                                                              ['username'],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Text(
+                                                    "Hair Styles",
+                                                    style: TextStyle(color: Colors.white),
+                                                  ),
+                                                ),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.grey,
+                                                    borderRadius: BorderRadius.circular(30)),
+                                                height: 30,
+                                              )
+                                            ],
                                           )
                                         ],
                                       ),

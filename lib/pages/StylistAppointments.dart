@@ -1,15 +1,20 @@
-import 'dart:developer';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cssalonapp/Model/appointment.dart';
+import 'package:cssalonapp/pages/profile.dart';
 import 'package:cssalonapp/pages/upload-pics.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:cssalonapp/providers/bookings.dart';
-import 'package:cssalonapp/widgets/MiniAppointmentCard.dart';
+import 'package:cssalonapp/widgets/BackGroundImage.dart';
 import 'package:cssalonapp/widgets/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+
+import 'appointment_details.dart';
+import 'mini-appointment.dart';
 
 class StylistAppointmentScreen extends StatefulWidget {
   @override
@@ -34,12 +39,32 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
     midHeader = [];
     futureAppointment = [];
     finalList = [];
+    reload();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _authProvider = Provider.of<AuthProvider>(context);
+    reload();
+  }
+
+  reload() {
+    setState(() {
+      isLoading = true;
+    });
+
+    topHeader..clear();
+    currentAppointment..clear();
+    midHeader..clear();
+    futureAppointment.clear();
+    finalList..clear();
+    initiateList();
+
+    Future.delayed(Duration(milliseconds: 375), () {
+      isLoading = false;
+      setState(() {});
+    });
   }
 
   @override
@@ -50,9 +75,8 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
       isFirstTime = true;
     }
     return Scaffold(
-        backgroundColor: Colors.grey[100],
         appBar: AppBar(
-          backgroundColor: Color(0xffF3F6FF).withOpacity(0.134),
+          backgroundColor: Theme.of(context).accentColor,
           elevation: 0,
           leading: Icon(
             Icons.menu,
@@ -66,7 +90,9 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
                 color: Colors.black54,
                 size: SizeConfig.horizontalBloc * 8,
               ),
-              onPressed: () async {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilePage()));
+              },
             ),
             IconButton(
               icon: Icon(
@@ -80,94 +106,106 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
             ),
             IconButton(
               icon: Icon(
-                Icons.settings_power,
+                Icons.autorenew,
                 color: Colors.black54,
                 size: SizeConfig.horizontalBloc * 8,
               ),
               onPressed: () async {
-                setState(() {
-                  isLoading = true;
-                });
-
-                topHeader..clear();
-                currentAppointment..clear();
-                midHeader..clear();
-                futureAppointment.clear();
-                finalList..clear();
-                initiateList();
-
-                Future.delayed(Duration(milliseconds: 375), () {
-                  isLoading = false;
-                  setState(() {});
-                });
+                reload();
               },
-            )
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.settings_power,
+                color: Colors.black54,
+                size: SizeConfig.horizontalBloc * 8,
+              ),
+              onPressed: () => _authProvider.signOut(),
+            ),
           ],
         ),
         body: isLoading
             ? SizedBox()
-            : StreamBuilder<QuerySnapshot>(
-                stream: Bookings.myAppointments(_authProvider.currentUser.username),
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  int len = 0;
-                  if (snapshot.hasData) {
-                    for (int index = 0; index < snapshot.data.documents.length; index++) {
-                      len++;
-                      var app = Appointment(
-                          date: snapshot.data.documents[index]['date'],
-                          myId: snapshot.data.documents[index]['customerUid'],
-                          customerName: snapshot.data.documents[index]['customerName'],
-                          phoneNumber: snapshot.data.documents[index]['customerPhone'],
-                          status: snapshot.data.documents[index]['status']);
-                      futureAppointment.add(Center(
-                          child: MiniAppointmentCard(
-                        onCardTapped: () {},
-                        appointmentData: app,
-                      )));
-                      finalList.addAll(futureAppointment);
-                    }
-                    if (snapshot.data.documents.length == 0) {
-                      len++;
-                      log((snapshot.data.documents.length == 0).toString());
-                      futureAppointment.add(Padding(
-                        padding: const EdgeInsets.only(top: 10.0, bottom: 9, left: 20),
-                        child: Container(
-                          width: SizeConfig.safeBlockHorizontal * 90,
-                          height: SizeConfig.verticalBloc * 3,
-                          //color: Colors.pink,
-                          child: Text(
-                            'No appointments at the moments!',
-                            style: TextStyle(
-                                fontSize: SizeConfig.horizontalBloc * 3,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
+            : Stack(
+                children: <Widget>[
+                  BackGroundImage(
+                    image: "assets/images/icon.jpg",
+                  ),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: Bookings.myAppointments(_authProvider.currentUser.username),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      int len = 0;
+                      if (snapshot.hasData) {
+                        for (int index = 0; index < snapshot.data.documents.length; index++) {
+                          len++;
+                          var app = Appointment(
+                            date: snapshot.data.documents[index]['date'],
+                            myId: snapshot.data.documents[index]['customerUid'],
+                            customerName: snapshot.data.documents[index]['customerName'],
+                            phoneNumber: snapshot.data.documents[index]['customerPhone'],
+                            status: snapshot.data.documents[index]['status'],
+                            docId: snapshot.data.documents[index].documentID,
+                            reSchedule: snapshot.data.documents[index]['schedule-date'],
+                            review: snapshot.data.documents[index]['review'],
+                          );
+                          futureAppointment.add(MyMiniAppointmentCard(
+                            onCardTapped: () {
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType.fade,
+                                      child: AppointmentDetailScreen(
+                                        appointmentData: app,
+                                      )));
+                            },
+                            key: Key(Random().nextInt(4000).toString()),
+                            appointmentData: app,
+                          ));
+                          finalList.addAll(futureAppointment);
+                        }
+                        if (snapshot.data.documents.length == 0) {
+                          len++;
+                          futureAppointment.add(Padding(
+                            padding: const EdgeInsets.only(top: 10.0, bottom: 9, left: 20),
+                            child: Container(
+                              width: SizeConfig.safeBlockHorizontal * 90,
+                              height: SizeConfig.verticalBloc * 3,
+                              //color: Colors.pink,
+                              child: Text(
+                                'No appointments at the moments!',
+                                style: TextStyle(
+                                    fontSize: SizeConfig.horizontalBloc * 3,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ));
+                          finalList.addAll(futureAppointment);
+                        }
+                      }
+
+                      return Container(
+                        color: Color(0xffF3F6FF).withOpacity(0.134),
+                        child: AnimationLimiter(
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount: len + 3,
+                            itemBuilder: (BuildContext context, int index) {
+                              return AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: Duration(milliseconds: 375),
+                                child: SlideAnimation(
+                                  verticalOffset: -20,
+                                  child: FadeInAnimation(child: finalList[index]),
+                                ),
+                              );
+                            },
                           ),
                         ),
-                      ));
-                      finalList.addAll(futureAppointment);
-                    }
-                  }
-
-                  return Container(
-                    color: Color(0xffF3F6FF).withOpacity(0.134),
-                    child: AnimationLimiter(
-                      child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        itemCount: len + 3,
-                        itemBuilder: (BuildContext context, int index) {
-                          return AnimationConfiguration.staggeredList(
-                            position: index,
-                            duration: Duration(milliseconds: 375),
-                            child: SlideAnimation(
-                              verticalOffset: -20,
-                              child: FadeInAnimation(child: finalList[index]),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                },
+                      );
+                    },
+                  )
+                ],
               ));
   }
 
@@ -187,7 +225,7 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
           //color: Colors.pink,
           child: Text(
             'Welcome Back !',
-            style: TextStyle(fontSize: SizeConfig.horizontalBloc * 6, color: Colors.black45),
+            style: TextStyle(fontSize: SizeConfig.horizontalBloc * 6, color: Colors.white),
           ),
         ),
       ),
@@ -204,7 +242,7 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
             style: TextStyle(
               fontSize: SizeConfig.horizontalBloc * 9.5,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: Colors.white,
             ),
           ),
         ),
@@ -220,7 +258,7 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
           //color: Colors.pink,
           child: Text(
             'Next appointments',
-            style: TextStyle(fontSize: SizeConfig.horizontalBloc * 5, color: Colors.black45),
+            style: TextStyle(fontSize: SizeConfig.horizontalBloc * 5, color: Colors.white),
           ),
         ),
       ),

@@ -1,18 +1,21 @@
 import 'package:cssalonapp/Model/appointment.dart';
+import 'package:cssalonapp/providers/auth.dart';
 import 'package:cssalonapp/providers/bookings.dart';
 import 'package:cssalonapp/widgets/ActionButton.dart';
 import 'package:cssalonapp/widgets/sizeConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:rating_dialog/rating_dialog.dart';
 
-class AppointmentDetailScreen extends StatefulWidget {
+class AppointmentEditScreen extends StatefulWidget {
   final Appointment appointmentData;
-  const AppointmentDetailScreen({Key key, @required this.appointmentData}) : super(key: key);
+  const AppointmentEditScreen({Key key, @required this.appointmentData}) : super(key: key);
   @override
-  _AppointmentDetailScreenState createState() => _AppointmentDetailScreenState();
+  _AppointmentEditScreenState createState() => _AppointmentEditScreenState();
 }
 
-class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
+class _AppointmentEditScreenState extends State<AppointmentEditScreen>
     with SingleTickerProviderStateMixin {
   bool isContainerCollapsed = true;
   bool isDateAndTimeVisible = false;
@@ -22,8 +25,10 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
   AnimationController animationController;
   Tween<double> tweenedValue;
   Animation tweenAnimation;
-  bool isLoading = false;
+  AuthProvider _provider;
   DateTime selectedDate;
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +44,12 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
         setState(() {});
       },
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _provider = Provider.of<AuthProvider>(context);
   }
 
   ///The animation here are staged
@@ -77,61 +88,28 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
     );
   }
 
-  openDatePicker(BuildContext context) async {
-    DatePicker.showDateTimePicker(context,
-        showTitleActions: true,
-        minTime: DateTime.now(),
-        maxTime: DateTime.now().add(new Duration(days: 365)), onChanged: (date) {
-      print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
-    }, onConfirm: (date) async {
-      setState(() {
-        isLoading = true;
-        selectedDate = date;
-      });
-      Map<String, dynamic> data = {'schedule-date': date.toString(), 'status': 'declined'};
-      await Bookings.editBooking(data, widget.appointmentData.docId);
-      setState(() {
-        isLoading = false;
-      });
-      reverseAnimation();
-      print('confirm $date');
-    }, locale: LocaleType.en);
-  }
-
-  acceptBooking() {
-    setState(() {
-      isLoading = true;
-    });
-    Map<String, dynamic> data = {"status": "accepted"};
-    Bookings.editBooking(data, widget.appointmentData.docId);
-    reverseAnimation();
-  }
-
-  sendReview() {
-    setState(() {
-      isLoading = true;
-    });
-    Map<String, dynamic> data = {"review": "requested"};
-    Bookings.editBooking(data, widget.appointmentData.docId);
-    reverseAnimation();
-  }
-
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: reverseAnimation,
+          icon: Icon(Icons.arrow_back_ios),
+        ),
+      ),
       bottomNavigationBar: AnimatedOpacity(
         duration: Duration(milliseconds: 230),
         opacity: isContainerCollapsed ? 0 : 1,
         child: ActionButton(
-          visible: widget.appointmentData?.review == null,
+          value1: widget.appointmentData?.status == 'declined' ? "Re-schedule" : "Edit",
+          value2: "Delete",
+          visible: widget.appointmentData?.status == 'pending',
           isLoading: isLoading,
-          value1: widget.appointmentData.status == 'accepted' ? 'send review link' : 'accept',
-          onAcceptPressed: () =>
-              widget.appointmentData.status == 'accepted' ? sendReview() : acceptBooking(),
-          onDecinePressed: () {
-            openDatePicker(context);
+          onAcceptPressed: () => openDatePicker(context),
+          onDecinePressed: () async {
+            await Bookings.deleteBooking(widget.appointmentData.docId);
+            reverseAnimation();
           },
         ),
       ),
@@ -144,7 +122,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                   AnimatedContainer(
                     curve: isContainerCollapsed ? Curves.elasticIn : Curves.elasticOut,
                     duration: Duration(seconds: 1),
-                    height: isContainerCollapsed ? 0 : SizeConfig.safeBlockVertical * 40,
+                    height: isContainerCollapsed ? 0 : SizeConfig.safeBlockVertical * 30,
                     width: isContainerCollapsed ? 0 : SizeConfig.safeBlockHorizontal * 100,
                     decoration: BoxDecoration(
                       color: Theme.of(context).accentColor,
@@ -156,7 +134,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(left: 48.0),
+                          padding: const EdgeInsets.only(left: 28.0),
                           child: Container(
                             //color: Colors.white,
                             height: SizeConfig.safeBlockVertical * 19,
@@ -166,7 +144,8 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                                 duration: Duration(milliseconds: 375),
                                 opacity: isDateAndTimeVisible ? 1 : 0,
                                 child: Text(
-                                  widget.appointmentData.date,
+                                  selectedDate?.toLocal()?.toString() ??
+                                      widget.appointmentData.date,
                                   style: TextStyle(
                                       fontSize: SizeConfig.safeBlockHorizontal * 11,
                                       fontWeight: FontWeight.w500,
@@ -180,7 +159,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                     ),
                   ),
                   Container(
-                    height: SizeConfig.safeBlockVertical * 45,
+                    height: SizeConfig.safeBlockVertical * 35,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 65.0),
                       child: Row(
@@ -254,7 +233,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              widget.appointmentData.customerName,
+                              "Stylist: ${widget.appointmentData.myId}",
                               style: TextStyle(
                                   fontSize: SizeConfig.safeBlockHorizontal * 10,
                                   fontWeight: FontWeight.w600),
@@ -268,9 +247,9 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                widget.appointmentData.status ?? 'Pending',
+                                "Status: ${widget.appointmentData.status ?? 'Pending'}",
                                 style: TextStyle(
-                                    fontSize: SizeConfig.safeBlockHorizontal * 10,
+                                    fontSize: SizeConfig.safeBlockHorizontal * 8,
                                     fontWeight: FontWeight.w600),
                               ),
                             )),
@@ -281,9 +260,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                widget.appointmentData?.reSchedule != null
-                                    ? "Available slot"
-                                    : 'Comment',
+                                'Stylist Reply Message:',
                                 style: TextStyle(
                                     fontSize: SizeConfig.safeBlockHorizontal * 4.5,
                                     fontWeight: FontWeight.w600,
@@ -297,7 +274,9 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              widget.appointmentData?.reSchedule ?? 'No comments',
+                              widget.appointmentData?.reSchedule != null
+                                  ? "Available slot \n" + widget.appointmentData?.reSchedule
+                                  : 'No Comments',
                               style: TextStyle(
                                   fontSize: SizeConfig.safeBlockHorizontal * 4.5,
                                   fontWeight: FontWeight.w600,
@@ -306,10 +285,11 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                           ),
                         ),
                         Visibility(
-                          visible: widget.appointmentData?.review != null,
+                          visible: widget.appointmentData?.review != null &&
+                              widget.appointmentData?.review == 'requested',
                           child: Column(
                             children: <Widget>[
-                              SizedBox(height: 10),
+                              SizedBox(height: 20),
                               Container(
                                   //color: Colors.yellow,
                                   width: SizeConfig.safeBlockHorizontal * 80,
@@ -317,28 +297,33 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      'Customer Review',
+                                      'Customer review requested!',
                                       style: TextStyle(
                                           fontSize: SizeConfig.safeBlockHorizontal * 4.5,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.black45),
                                     ),
                                   )),
-                              Container(
-                                //color: Colors.yellow,
-                                width: SizeConfig.safeBlockHorizontal * 80,
-                                //height: SizeConfig.safeBlockVertical*20,
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    widget.appointmentData?.review ?? 'No reviews',
-                                    style: TextStyle(
-                                        fontSize: SizeConfig.safeBlockHorizontal * 4.5,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  height: 40,
+                                  width: SizeConfig.safeBlockHorizontal * 70,
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context).accentColor,
+                                      borderRadius: BorderRadius.circular(30)),
+                                  child: FlatButton(
+                                    child: Text(
+                                      "Rate Stylist",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    onPressed: _showRatingDialog,
                                   ),
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         )
@@ -352,6 +337,54 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
         ),
       ),
     );
+  }
+
+  void _showRatingDialog() {
+    // We use the built in showDialog function to show our Rating Dialog
+    showDialog(
+        context: context,
+        barrierDismissible: true, // set to false if you want to force a rating
+        builder: (context) {
+          return RatingDialog(
+            icon:
+                const FlutterLogo(size: 100, colors: Colors.red), // set your own image/icon widget
+            title: "Instyle Rating Dialog",
+            description: "Tap a star to set your rating. Add more description here if you want.",
+            submitButton: "SUBMIT", // optional
+            positiveComment: "We are so happy to hear :)", // optional
+            negativeComment: "We're sad to hear :(", // optional
+            accentColor: Colors.red, // optional
+            onSubmitPressed: (int rating) async {
+              await Bookings.rateBooking(
+                  rating, widget.appointmentData.docId, widget.appointmentData.myId);
+              reverseAnimation();
+            },
+            onAlternativePressed: () {
+              print("onAlternativePressed: do something");
+              // TODO: maybe you want the user to contact you instead of rating a bad review
+            },
+          );
+        });
+  }
+
+  openDatePicker(BuildContext context) async {
+    DatePicker.showDateTimePicker(context,
+        showTitleActions: true,
+        minTime: DateTime.now(),
+        maxTime: DateTime.now().add(new Duration(days: 365)), onChanged: (date) {
+      print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+    }, onConfirm: (date) async {
+      setState(() {
+        isLoading = true;
+        selectedDate = date;
+      });
+      Map<String, dynamic> data = {'date': date.toString()};
+      await Bookings.editBooking(data, widget.appointmentData.docId);
+      setState(() {
+        isLoading = false;
+      });
+      print('confirm $date');
+    }, locale: LocaleType.en);
   }
 
   void reverseAnimation() {

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cssalonapp/Model/appointment.dart';
+import 'package:cssalonapp/pages/appointment_edit.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:cssalonapp/widgets/MiniAppointmentCard.dart';
 import 'package:cssalonapp/widgets/SlidingCard.dart';
@@ -11,8 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-
-import 'appointment_details.dart';
 
 class AppointmentScreen extends StatefulWidget {
   @override
@@ -82,8 +81,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               myId: snapshot.data.documents[index]['stylist'],
                               customerName: snapshot.data.documents[index]['customerName'],
                               phoneNumber: snapshot.data.documents[index]['phoneNumber'],
-                              status: snapshot.data.documents[index]['status']);
-                          developer.log(app.customerName);
+                              status: snapshot.data.documents[index]['status'],
+                              reSchedule: snapshot.data.documents[index]['schedule-date'],
+                              review: snapshot.data.documents[index]['review'],
+                              docId: snapshot.data.documents[index].documentID);
                           return AnimationConfiguration.staggeredList(
                             position: index,
                             duration: Duration(milliseconds: 375),
@@ -97,7 +98,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                           context,
                                           PageTransition(
                                               type: PageTransitionType.fade,
-                                              child: AppointmentDetailScreen(
+                                              child: AppointmentEditScreen(
                                                 appointmentData: app,
                                               )));
                                     },

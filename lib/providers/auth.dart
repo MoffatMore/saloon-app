@@ -21,7 +21,6 @@ enum AuthState { SIGNEDIN, SIGNEDOUT, LOADING }
 
 class AuthProvider with ChangeNotifier {
   // firebase instance
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   /// state of the entire app
   AuthState _state = AuthState.SIGNEDOUT;
@@ -165,5 +164,82 @@ class AuthProvider with ChangeNotifier {
         .collection("styles")
         .where("stylist", isEqualTo: currentUser.id)
         .snapshots();
+  }
+
+  Stream<DocumentSnapshot> getProfile() {
+    return Firestore.instance.collection("profile").document(currentUser.id).snapshots();
+  }
+
+  Future<void> updateUser(String username, String phone, String lastname, String email,
+      String password, String profession, String description, File image) async {
+    try {
+      email = email.trim();
+      password = password.trim();
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      AuthResult authResult = await user.reauthenticateWithCredential(
+        EmailAuthProvider.getCredential(
+          email: user.email,
+          password: password,
+        ),
+      );
+      if (authResult.user != null) {
+        var user = authResult.user;
+        if (currentUser.mode == 'Customer') {
+          if (image != null) {
+            StorageReference storageReference =
+                FirebaseStorage.instance.ref().child('styles/${Path.basename(image.path)}');
+            StorageUploadTask uploadTask = storageReference.putFile(image);
+            await uploadTask.onComplete;
+            await storageReference.getDownloadURL().then((fileURL) {
+              Firestore.instance.collection("profile").document(user.uid).setData({
+                "username": username,
+                "surname": lastname,
+                "phone": phone,
+                "id": user.uid,
+                'photo': fileURL
+              });
+            });
+          } else {
+            await Firestore.instance.collection("profile").document(user.uid).setData({
+              "username": username,
+              "surname": lastname,
+              "phone": phone,
+              "id": user.uid,
+            });
+          }
+        } else {
+          if (image != null) {
+            StorageReference storageReference =
+                FirebaseStorage.instance.ref().child('styles/${Path.basename(image.path)}');
+            StorageUploadTask uploadTask = storageReference.putFile(image);
+            await uploadTask.onComplete;
+            await storageReference.getDownloadURL().then((fileURL) {
+              Firestore.instance.collection("profile").document(user.uid).setData({
+                "username": username,
+                "surname": lastname,
+                "phone": phone,
+                "id": user.uid,
+                'profession': profession,
+                'description': description,
+                'photo': fileURL
+              });
+            });
+          } else {
+            Firestore.instance.collection("profile").document(user.uid).setData({
+              "username": username,
+              "surname": lastname,
+              "phone": phone,
+              "id": user.uid,
+              'profession': profession,
+              'description': description,
+            });
+          }
+        }
+      } else {
+        log('couldn\'t register user');
+      }
+    } on PlatformException catch (e) {
+      print(e.message);
+    }
   }
 }

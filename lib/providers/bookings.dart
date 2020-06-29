@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Bookings {
@@ -37,5 +39,23 @@ class Bookings {
     var snapshot =
         Firestore.instance.collection('bookings').where('stylist', isEqualTo: username).snapshots();
     return snapshot;
+  }
+
+  static Future<void> editBooking(Map<String, dynamic> data, String id) {
+    return Firestore.instance.collection('bookings').document(id).updateData(data);
+  }
+
+  static Future<void> deleteBooking(String id) {
+    return Firestore.instance.collection("bookings").document(id).delete();
+  }
+
+  static Stream<QuerySnapshot> getHairStyles(id) {
+    return Firestore.instance.collection("styles").where("stylist", isEqualTo: id).snapshots();
+  }
+
+  static Future<void> acceptBooking(String docId) {}
+
+  static Future<void> rateBooking(int rating, String docId, String stylist) {
+    log("onSubmitPressed: rating = $rating");
   }
 }

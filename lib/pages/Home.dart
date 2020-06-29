@@ -48,13 +48,14 @@ class HomeState extends State<Home> {
             )
           ],
           title: Text(
-            "Bonno\'s Beauty & Parlor",
+            "Instyle Saloon",
             style: TextStyle(fontSize: 25.0),
           ),
+          centerTitle: true,
         ),
       ),
       body: Stack(
-        children: <Widget>[BackGroundImage(image: "assets/images/image1.jpg"), HomeSection()],
+        children: <Widget>[BackGroundImage(image: "assets/images/icon.jpg"), HomeSection()],
       ),
     );
   }
