@@ -1,12 +1,13 @@
-import 'package:cssalonapp/Model/HomeListData.dart';
+import 'dart:developer';
+
 import 'package:cssalonapp/pages/HomeListView.dart';
 import 'package:flutter/material.dart';
 
-class SearchFriend extends SearchDelegate {
+class SearchStyle extends SearchDelegate {
   final List styles;
   final List recentStyles;
 
-  SearchFriend({@required this.styles, this.recentStyles});
+  SearchStyle({@required this.styles, this.recentStyles});
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -48,7 +49,8 @@ class SearchFriend extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     final suggestions = query.isEmpty
         ? styles
-        : styles.where((q) => q.profile.username.startsWith(query)).toList();
+        : styles.where((q) => q['name'] == query).toList();
+    log(suggestions.toString());
     return CustomContainer(suggestions: suggestions, query: query);
   }
 }
@@ -82,7 +84,7 @@ class CustomContainer extends StatelessWidget {
             borderRadius: BorderRadius.circular(15.0),
             child: HomeListView(
               image: styles[index]['image'],
-              name: styles[index][query],
+              name: styles[index]['name'],
             ),
           );
         },
