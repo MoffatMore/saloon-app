@@ -37,20 +37,39 @@ class BookingState extends State<Booking> {
   TextEditingController phoneCtrl;
   String _chosen = '';
   bool isAutoValid = false;
-  DateTime selectedDate;
+  DateTime startDate;
+  DateTime endDate;
   Validation validation = Validation();
   AuthProvider _auth;
   bool isLoading = false;
 
-  openDatePicker(BuildContext context) async {
+  openStartDatePicker(BuildContext context) async {
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
         minTime: DateTime.now(),
-        maxTime: DateTime.now().add(new Duration(days: 365)), onChanged: (date) {
-      print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+        maxTime: DateTime.now().add(new Duration(days: 365)),
+        onChanged: (date) {
+      print('change $date in time zone ' +
+          date.timeZoneOffset.inHours.toString());
     }, onConfirm: (date) {
       setState(() {
-        selectedDate = date;
+        startDate = date;
+      });
+      print('confirm $date');
+    }, locale: LocaleType.en);
+  }
+
+  openEndDatePicker(BuildContext context) async {
+    DatePicker.showDateTimePicker(context,
+        showTitleActions: true,
+        minTime: DateTime.now(),
+        maxTime: DateTime.now().add(new Duration(days: 365)),
+        onChanged: (date) {
+      print('change $date in time zone ' +
+          date.timeZoneOffset.inHours.toString());
+    }, onConfirm: (date) {
+      setState(() {
+        endDate = date;
       });
       print('confirm $date');
     }, locale: LocaleType.en);
@@ -78,7 +97,8 @@ class BookingState extends State<Booking> {
           customerName: customerCtrl.text,
           customerPhone: phoneCtrl.text,
           customerUid: _auth.currentUser.id.toString(),
-          date: selectedDate?.toString(),
+          start_date: startDate?.toString(),
+          end_date: endDate?.toString(),
           stylist: widget.stylist != null ? widget.stylist : _chosen,
           reason: widget.title);
       setState(() {
@@ -112,14 +132,14 @@ class BookingState extends State<Booking> {
     super.didChangeDependencies();
     _auth = Provider.of<AuthProvider>(context);
     phoneCtrl.text = _auth.currentUser.phone;
-    stylistCtrl.text = _auth.currentUser.username;
+    customerCtrl.text = _auth.currentUser.username;
     stylistCtrl.text = widget.stylist;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60.0),
         child: AppBar(
@@ -143,14 +163,17 @@ class BookingState extends State<Booking> {
                             Text(
                               "Booking Form",
                               style: TextStyle(
-                                  color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
+                                  color: Colors.black,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               height: 20.0,
                             ),
                             CustomTextFormField(
                               focusNode: username,
-                              validator: (val) => validation.validate("Username", val, TYPE.TEXT),
+                              validator: (val) => validation.validate(
+                                  "Username", val, TYPE.TEXT),
                               controller: customerCtrl,
                               hintText: "Username",
                               onSubmitted: (val) {
@@ -173,7 +196,8 @@ class BookingState extends State<Booking> {
                                     textInputAction: TextInputAction.done,
                                   )
                                 : StreamBuilder<QuerySnapshot>(
-                                    stream: Bookings.getHairCareStyList(widget.title),
+                                    stream: Bookings.getHairCareStyList(
+                                        widget.title),
                                     builder: (context, snapshot) {
                                       if (!snapshot.hasData) {
                                         return Container(
@@ -183,16 +207,21 @@ class BookingState extends State<Booking> {
                                         );
                                       }
                                       List hairCareStylist = List();
-                                      for (int i = 0; i < snapshot.data.documents.length; i++) {
+                                      for (int i = 0;
+                                          i < snapshot.data.documents.length;
+                                          i++) {
                                         hairCareStylist.add({
-                                          'display': snapshot.data.documents[i]['username'],
-                                          'value': snapshot.data.documents[i]['username'],
+                                          'display': snapshot.data.documents[i]
+                                              ['username'],
+                                          'value': snapshot.data.documents[i]
+                                              ['username'],
                                         });
                                       }
                                       return Container(
-                                        color: Colors.white,
+                                        color: Colors.grey.shade400,
                                         child: DropDownFormField(
-                                          titleText: 'My ${widget.title} stylist',
+                                          titleText:
+                                              'My ${widget.title} stylist',
                                           hintText: 'Please choose one',
                                           value: _chosen,
                                           onSaved: (value) {
@@ -219,8 +248,8 @@ class BookingState extends State<Booking> {
                               onSubmitted: (val) {
                                 phoneNumber.unfocus();
                               },
-                              validator: (val) =>
-                                  validation.validate("Phone number", val, TYPE.TEXT),
+                              validator: (val) => validation.validate(
+                                  "Phone number", val, TYPE.TEXT),
                               focusNode: phoneNumber,
                               controller: phoneCtrl,
                               hintText: "Contact no",
@@ -232,7 +261,7 @@ class BookingState extends State<Booking> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                openDatePicker(context);
+                                openStartDatePicker(context);
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(5.0),
@@ -240,21 +269,58 @@ class BookingState extends State<Booking> {
                                   height: 50,
                                   alignment: Alignment.centerLeft,
                                   width: double.infinity,
-                                  color: Colors.white,
+                                  color: Colors.grey.shade300,
                                   padding: EdgeInsets.all(10.0),
-                                  child: Text((selectedDate != null)
-                                      ? selectedDate.toLocal().toString()
-                                      : "Select Date"),
+                                  child: Text((startDate != null)
+                                      ? startDate.toLocal().toString()
+                                      : "Select Start DateTime"),
                                 ),
                               ),
                             ),
-                            (isAutoValid & (selectedDate == null))
+                            (isAutoValid & (startDate == null))
                                 ? Container(
-                                    padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                                    padding:
+                                        EdgeInsets.only(left: 15.0, top: 10.0),
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      "Please select date",
-                                      style: TextStyle(color: Colors.red, fontSize: 12),
+                                      "Please select start date time",
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 12),
+                                    ),
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: 20.0,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                openEndDatePicker(context);
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5.0),
+                                child: Container(
+                                  height: 50,
+                                  alignment: Alignment.centerLeft,
+                                  width: double.infinity,
+                                  color: Colors.grey.shade300,
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Text((endDate != null)
+                                      ? endDate.toLocal().toString()
+                                      : startDate != null
+                                          ? startDate.toLocal().toString()
+                                          : "Select End DateTime"),
+                                ),
+                              ),
+                            ),
+                            (isAutoValid & (endDate == null))
+                                ? Container(
+                                    padding:
+                                        EdgeInsets.only(left: 15.0, top: 10.0),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Please select end date time",
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 12),
                                     ),
                                   )
                                 : Container(),

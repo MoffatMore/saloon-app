@@ -8,7 +8,8 @@ class AppointmentFrontCard extends StatefulWidget {
   final Function onRedCloseButtonTapped;
   final Function onAccep;
   final Function onDecline;
-  final String date;
+  final String startDate;
+  final String endDate;
   final String status;
   const AppointmentFrontCard(
       {Key key,
@@ -17,7 +18,8 @@ class AppointmentFrontCard extends StatefulWidget {
       @required this.customerName,
       @required this.onInfoTapped,
       @required this.myId,
-      @required this.date,
+      @required this.startDate,
+      @required this.endDate,
       @required this.status,
       @required this.onRedCloseButtonTapped})
       : super(key: key);
@@ -35,8 +37,9 @@ class _AppointmentFrontCardState extends State<AppointmentFrontCard> {
           child: Container(
             decoration: BoxDecoration(
                 color: Color(0xff2C8BFF),
-                borderRadius:
-                    BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(25),
+                    topRight: Radius.circular(25))),
             child: Padding(
               padding: const EdgeInsets.only(top: 0, left: 20),
               child: Column(
@@ -79,7 +82,9 @@ class _AppointmentFrontCardState extends State<AppointmentFrontCard> {
                           width: 10,
                         ),
                         Text(
-                          widget.date,
+                          'Time period \n Date ${(widget.startDate).split(' ')[0]}'
+                          '\n Start Time: ${((widget.startDate).split(' ')[1]).split('.')[0]}'
+                          '\nEnd Time: ${((widget.endDate).split(' ')[1]).split('.')[0]}',
                           style: TextStyle(
                               fontSize: SizeConfig.safeBlockHorizontal * 4.7,
                               color: Colors.white70),
@@ -98,7 +103,8 @@ class _AppointmentFrontCardState extends State<AppointmentFrontCard> {
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(25), bottomRight: Radius.circular(25))),
+                    bottomLeft: Radius.circular(25),
+                    bottomRight: Radius.circular(25))),
             child: Padding(
               padding: const EdgeInsets.only(left: 20.0, right: 20.0),
               child: Column(
@@ -125,7 +131,8 @@ class _AppointmentFrontCardState extends State<AppointmentFrontCard> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontSize: SizeConfig.safeBlockHorizontal * 4.7,
+                                      fontSize:
+                                          SizeConfig.safeBlockHorizontal * 4.7,
                                       color: Colors.black87),
                                 ),
                                 Text(
@@ -133,7 +140,8 @@ class _AppointmentFrontCardState extends State<AppointmentFrontCard> {
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontSize: SizeConfig.safeBlockHorizontal * 4.7,
+                                      fontSize:
+                                          SizeConfig.safeBlockHorizontal * 4.7,
                                       color: Colors.black87),
                                 )
                               ],
@@ -160,13 +168,15 @@ class _AppointmentFrontCardState extends State<AppointmentFrontCard> {
                                         angle: 0.7777,
                                         child: Icon(
                                           Icons.add_circle,
-                                          size: SizeConfig.safeBlockHorizontal * 9,
+                                          size: SizeConfig.safeBlockHorizontal *
+                                              9,
                                           color: Colors.redAccent,
                                         ),
                                       )
                                     : Icon(
                                         Icons.info,
-                                        size: SizeConfig.safeBlockHorizontal * 9,
+                                        size:
+                                            SizeConfig.safeBlockHorizontal * 9,
                                         color: Colors.blue,
                                       ),
                               ),
@@ -201,7 +211,8 @@ class _AppointmentFrontCardState extends State<AppointmentFrontCard> {
                                   child: Text(
                                     'accept',
                                     style: TextStyle(
-                                      fontSize: SizeConfig.safeBlockHorizontal * 5.5,
+                                      fontSize:
+                                          SizeConfig.safeBlockHorizontal * 5.5,
                                     ),
                                   ),
                                   onPressed: widget.onAccep,
@@ -229,7 +240,8 @@ class _AppointmentFrontCardState extends State<AppointmentFrontCard> {
                                     'Decline',
                                     style: TextStyle(
                                       color: Color(0xff878FA6),
-                                      fontSize: SizeConfig.safeBlockHorizontal * 5,
+                                      fontSize:
+                                          SizeConfig.safeBlockHorizontal * 5,
                                     ),
                                   ),
                                   onPressed: widget.onDecline,

@@ -23,8 +23,9 @@ class MyMiniAppointmentCard extends StatelessWidget {
         child: Container(
           width: SizeConfig.horizontalBloc * 50,
           height: SizeConfig.verticalBloc * 10.7,
-          decoration:
-              BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(10)),
+          decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(10)),
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Row(
@@ -55,7 +56,7 @@ class MyMiniAppointmentCard extends StatelessWidget {
                         width: SizeConfig.safeBlockHorizontal * 90,
                         //color: Colors.pink,
                         child: Text(
-                          'Date: ${appointmentData?.date ?? ''}',
+                          'Time period ${appointmentData?.startDate} ${appointmentData?.endDate}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: SizeConfig.safeBlockHorizontal * 4.0,

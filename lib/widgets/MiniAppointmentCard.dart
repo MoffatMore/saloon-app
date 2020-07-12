@@ -19,13 +19,15 @@ class MiniAppointmentCard extends StatelessWidget {
       },
       child: Container(
         width: SizeConfig.horizontalBloc * 50,
-        height: SizeConfig.verticalBloc * 10.7,
+        height: 120,
         margin: EdgeInsets.symmetric(horizontal: 20),
-        decoration:
-            BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(10)),
         child: Card(
             elevation: 0.3,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
@@ -56,7 +58,31 @@ class MiniAppointmentCard extends StatelessWidget {
                           width: SizeConfig.safeBlockHorizontal * 90,
                           //color: Colors.pink,
                           child: Text(
-                            'Date: ${appointmentData?.date}',
+                            'Date: ${(appointmentData?.startDate).split(' ')[0]}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConfig.safeBlockHorizontal * 4.0,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: SizeConfig.safeBlockVertical * 3,
+                          width: SizeConfig.safeBlockHorizontal * 90,
+                          //color: Colors.pink,
+                          child: Text(
+                            'Start Time: ${((appointmentData?.startDate).split(' ')[1]).split('.')[0]}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConfig.safeBlockHorizontal * 4.0,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: SizeConfig.safeBlockVertical * 3,
+                          width: SizeConfig.safeBlockHorizontal * 90,
+                          //color: Colors.pink,
+                          child: Text(
+                            'End Time: ${((appointmentData?.endDate).split(' ')[1]).split('.')[0]}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: SizeConfig.safeBlockHorizontal * 4.0,

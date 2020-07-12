@@ -64,24 +64,33 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 child: StreamBuilder(
                     stream: _firestore
                         .collection('bookings')
-                        .where('customerUid', isEqualTo: _auth.currentUser.id.toString())
+                        .where('customerUid',
+                            isEqualTo: _auth.currentUser.id.toString())
                         .snapshots(),
                     builder: (context, AsyncSnapshot snapshot) {
                       if (!snapshot.hasData) {
-                        return Center(child: Container(child: Text("No appointments")));
+                        return Center(
+                            child: Container(child: Text("No appointments")));
                       }
                       return ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (BuildContext context, int index) {
                           var app = Appointment(
-                              date: snapshot.data.documents[index]['date'],
+                              startDate: snapshot.data.documents[index]
+                                  ['start_date'],
+                              endDate: snapshot.data.documents[index]
+                                  ['end_date'],
                               myId: snapshot.data.documents[index]['stylist'],
-                              customerName: snapshot.data.documents[index]['customerName'],
-                              phoneNumber: snapshot.data.documents[index]['phoneNumber'],
+                              customerName: snapshot.data.documents[index]
+                                  ['customerName'],
+                              phoneNumber: snapshot.data.documents[index]
+                                  ['phoneNumber'],
                               status: snapshot.data.documents[index]['status'],
-                              reSchedule: snapshot.data.documents[index]['schedule-date'],
-                              comment: snapshot.data.documents[index]['comment'],
+                              reSchedule: snapshot.data.documents[index]
+                                  ['schedule-date'],
+                              comment: snapshot.data.documents[index]
+                                  ['comment'],
                               review: snapshot.data.documents[index]['review'],
                               docId: snapshot.data.documents[index].documentID);
                           developer.log('review ${app.review?.toString()}');

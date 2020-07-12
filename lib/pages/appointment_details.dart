@@ -8,9 +8,11 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class AppointmentDetailScreen extends StatefulWidget {
   final Appointment appointmentData;
-  const AppointmentDetailScreen({Key key, @required this.appointmentData}) : super(key: key);
+  const AppointmentDetailScreen({Key key, @required this.appointmentData})
+      : super(key: key);
   @override
-  _AppointmentDetailScreenState createState() => _AppointmentDetailScreenState();
+  _AppointmentDetailScreenState createState() =>
+      _AppointmentDetailScreenState();
 }
 
 class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
@@ -82,14 +84,19 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
         minTime: DateTime.now(),
-        maxTime: DateTime.now().add(new Duration(days: 365)), onChanged: (date) {
-      print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+        maxTime: DateTime.now().add(new Duration(days: 365)),
+        onChanged: (date) {
+      print('change $date in time zone ' +
+          date.timeZoneOffset.inHours.toString());
     }, onConfirm: (date) async {
       setState(() {
         isLoading = true;
         selectedDate = date;
       });
-      Map<String, dynamic> data = {'schedule-date': date.toString(), 'status': 'declined'};
+      Map<String, dynamic> data = {
+        'schedule-date': date.toString(),
+        'status': 'declined'
+      };
       await Bookings.editBooking(data, widget.appointmentData.docId);
       setState(() {
         isLoading = false;
@@ -137,10 +144,13 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
         child: CustomActionButton(
           visible: widget.appointmentData?.review == null,
           isLoading: isLoading,
-          value1: widget.appointmentData.status == 'accepted' ? 'review link' : 'accept',
+          value1: widget.appointmentData.status == 'accepted'
+              ? 'review link'
+              : 'accept',
           value2: "Cancel",
-          onAcceptPressed: () =>
-              widget.appointmentData.status == 'accepted' ? sendReview() : acceptBooking(),
+          onAcceptPressed: () => widget.appointmentData.status == 'accepted'
+              ? sendReview()
+              : acceptBooking(),
           onDecinePressed: () {
             declineAppointment(widget.appointmentData);
           },
@@ -163,10 +173,16 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
               Stack(
                 children: <Widget>[
                   AnimatedContainer(
-                    curve: isContainerCollapsed ? Curves.elasticIn : Curves.elasticOut,
+                    curve: isContainerCollapsed
+                        ? Curves.elasticIn
+                        : Curves.elasticOut,
                     duration: Duration(seconds: 1),
-                    height: isContainerCollapsed ? 0 : SizeConfig.safeBlockVertical * 40,
-                    width: isContainerCollapsed ? 0 : SizeConfig.safeBlockHorizontal * 100,
+                    height: isContainerCollapsed
+                        ? 0
+                        : SizeConfig.safeBlockVertical * 40,
+                    width: isContainerCollapsed
+                        ? 0
+                        : SizeConfig.safeBlockHorizontal * 100,
                     decoration: BoxDecoration(
                       color: Theme.of(context).accentColor,
                       borderRadius: BorderRadius.only(
@@ -187,11 +203,11 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                                 duration: Duration(milliseconds: 375),
                                 opacity: isDateAndTimeVisible ? 1 : 0,
                                 child: Text(
-                                  '${widget.appointmentData.date}',
+                                  'Time period \n Date ${(widget.appointmentData?.startDate).split(' ')[0]}'
+                                  '\n Start Time: ${((widget.appointmentData?.startDate).split(' ')[1]).split('.')[0]}'
+                                  '\nEnd Time: ${((widget.appointmentData?.endDate).split(' ')[1]).split('.')[0]}',
                                   style: TextStyle(
-                                      fontSize: SizeConfig.safeBlockHorizontal * 11,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
+                                      fontSize: 25, color: Colors.white),
                                 ),
                               ),
                             ),
@@ -227,7 +243,8 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
 //                            ),
 //                          ),
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0, left: 18),
+                            padding:
+                                const EdgeInsets.only(bottom: 8.0, left: 18),
                             child: Align(
                               alignment: Alignment.bottomLeft,
                               child: GestureDetector(
@@ -240,13 +257,17 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                                   child: Container(
                                     decoration: BoxDecoration(
                                         color: Colors.lightBlue,
-                                        border: Border.all(color: Colors.white, width: 5),
-                                        borderRadius: BorderRadius.circular(35)),
+                                        border: Border.all(
+                                            color: Colors.white, width: 5),
+                                        borderRadius:
+                                            BorderRadius.circular(35)),
                                     height: SizeConfig.safeBlockVertical * 8.66,
-                                    width: SizeConfig.safeBlockHorizontal * 17.33,
+                                    width:
+                                        SizeConfig.safeBlockHorizontal * 17.33,
                                     child: Icon(
                                       Icons.access_alarm,
-                                      size: SizeConfig.safeBlockHorizontal * 8.5,
+                                      size:
+                                          SizeConfig.safeBlockHorizontal * 8.5,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -291,7 +312,8 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                               child: Text(
                                 widget.appointmentData.status ?? 'Pending',
                                 style: TextStyle(
-                                    fontSize: SizeConfig.safeBlockHorizontal * 10,
+                                    fontSize:
+                                        SizeConfig.safeBlockHorizontal * 10,
                                     fontWeight: FontWeight.w600),
                               ),
                             )),
@@ -306,7 +328,8 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                                     ? "Available slot"
                                     : 'Comment',
                                 style: TextStyle(
-                                    fontSize: SizeConfig.safeBlockHorizontal * 4.5,
+                                    fontSize:
+                                        SizeConfig.safeBlockHorizontal * 4.5,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.black45),
                               ),
@@ -318,9 +341,11 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              widget.appointmentData?.reSchedule ?? 'No comments',
+                              widget.appointmentData?.reSchedule ??
+                                  'No comments',
                               style: TextStyle(
-                                  fontSize: SizeConfig.safeBlockHorizontal * 4.5,
+                                  fontSize:
+                                      SizeConfig.safeBlockHorizontal * 4.5,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black),
                             ),
@@ -340,7 +365,9 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                                     child: Text(
                                       'Customer Review',
                                       style: TextStyle(
-                                          fontSize: SizeConfig.safeBlockHorizontal * 4.5,
+                                          fontSize:
+                                              SizeConfig.safeBlockHorizontal *
+                                                  4.5,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.black45),
                                     ),
@@ -352,9 +379,12 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen>
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                    widget.appointmentData?.review ?? 'No reviews',
+                                    widget.appointmentData?.review ??
+                                        'No reviews',
                                     style: TextStyle(
-                                        fontSize: SizeConfig.safeBlockHorizontal * 4.5,
+                                        fontSize:
+                                            SizeConfig.safeBlockHorizontal *
+                                                4.5,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black),
                                   ),

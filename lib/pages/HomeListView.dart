@@ -1,4 +1,5 @@
 import 'package:cssalonapp/pages/Booking.dart';
+import 'package:cssalonapp/pages/ratings.dart';
 import 'package:cssalonapp/theme/Color.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class HomeListView extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Booking(
+                builder: (context) => ViewStylist(
                       title: name,
                     )));
       },
@@ -30,21 +31,7 @@ class HomeListView extends StatelessWidget {
                 image: AssetImage(image),
               ),
             ),
-            height: 150.0,
-          ),
-          Container(
-            height: 150.0,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              gradient: LinearGradient(
-                begin: FractionalOffset.centerLeft,
-                end: FractionalOffset.centerRight,
-                colors: [
-                  Colors.white,
-                  Colors.white.withOpacity(0.0),
-                ],
-              ),
-            ),
+            height: 250.0,
           ),
           Container(
               padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
@@ -55,7 +42,8 @@ class HomeListView extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     name,
-                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: 5.0,

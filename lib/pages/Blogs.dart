@@ -16,7 +16,7 @@ class Blogs extends StatelessWidget {
           title: Text("Our Hair Stylist"),
         ),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: Stack(
         children: <Widget>[
           StreamBuilder<QuerySnapshot>(
@@ -35,7 +35,8 @@ class Blogs extends StatelessWidget {
                         return GestureDetector(
                           onTap: () {},
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 10.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
@@ -50,7 +51,8 @@ class Blogs extends StatelessWidget {
                                         margin: EdgeInsets.all(0.0),
                                         width: 130.0,
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(4.0),
+                                          borderRadius:
+                                              BorderRadius.circular(4.0),
                                           child: Image.asset(
                                             "assets/images/user.jpg",
                                             fit: BoxFit.fill,
@@ -60,17 +62,19 @@ class Blogs extends StatelessWidget {
                                     ),
                                     Expanded(
                                         child: Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10.0),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.max,
                                         children: <Widget>[
                                           Text(
                                             "Name: " +
                                                 "${snapshot.data.documents[index]['username']}",
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold, fontSize: 16.0),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.0),
                                           ),
                                           SizedBox(
                                             height: 5.0,
@@ -79,7 +83,8 @@ class Blogs extends StatelessWidget {
                                             "Contact: " +
                                                 "${snapshot.data.documents[index]['phone']}",
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold, fontSize: 16.0),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.0),
                                           ),
                                           SizedBox(
                                             height: 5.0,
@@ -87,13 +92,15 @@ class Blogs extends StatelessWidget {
                                           Text(
                                             "Job Description",
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold, fontSize: 16.0),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.0),
                                           ),
                                           SizedBox(
                                             height: 5.0,
                                           ),
                                           Text(
-                                            snapshot.data.documents[index]['description'] ??
+                                            snapshot.data.documents[index]
+                                                    ['description'] ??
                                                 'No job description',
                                             maxLines: 5,
                                           ),
@@ -105,21 +112,30 @@ class Blogs extends StatelessWidget {
                                               Container(
                                                 child: FlatButton(
                                                   onPressed: () {
-                                                    Navigator.of(context).push(MaterialPageRoute(
-                                                        builder: (context) => Booking(
-                                                            title: "Book "
-                                                                "Stylist",
-                                                            stylist: snapshot.data.documents[index]
-                                                                ['username'])));
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                Booking(
+                                                                    title:
+                                                                        "Book "
+                                                                        "Stylist",
+                                                                    stylist: snapshot
+                                                                            .data
+                                                                            .documents[index]
+                                                                        [
+                                                                        'username'])));
                                                   },
                                                   child: Text(
                                                     "Book",
-                                                    style: TextStyle(color: Colors.white),
+                                                    style: TextStyle(
+                                                        color: Colors.white),
                                                   ),
                                                 ),
                                                 decoration: BoxDecoration(
                                                     color: Colors.redAccent,
-                                                    borderRadius: BorderRadius.circular(30)),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30)),
                                                 height: 30,
                                                 width: 70,
                                               ),
@@ -133,26 +149,34 @@ class Blogs extends StatelessWidget {
                                                     Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
-                                                        builder: (context) => BlogDetails(
+                                                        builder: (context) =>
+                                                            BlogDetails(
                                                           index: index,
                                                           uid: snapshot
-                                                              .data.documents[index].documentID,
-                                                          image: "assets/images/user.jpg",
+                                                              .data
+                                                              .documents[index]
+                                                              .documentID,
+                                                          image:
+                                                              "assets/images/user.jpg",
                                                           blog: blogDetails,
-                                                          title: snapshot.data.documents[index]
-                                                              ['username'],
+                                                          title: snapshot.data
+                                                                  .documents[
+                                                              index]['username'],
                                                         ),
                                                       ),
                                                     );
                                                   },
                                                   child: Text(
                                                     "Hair Styles",
-                                                    style: TextStyle(color: Colors.white),
+                                                    style: TextStyle(
+                                                        color: Colors.white),
                                                   ),
                                                 ),
                                                 decoration: BoxDecoration(
                                                     color: Colors.grey,
-                                                    borderRadius: BorderRadius.circular(30)),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30)),
                                                 height: 30,
                                               )
                                             ],

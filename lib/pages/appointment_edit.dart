@@ -12,7 +12,8 @@ import 'package:quick_feedback/quick_feedback.dart';
 
 class AppointmentEditScreen extends StatefulWidget {
   final Appointment appointmentData;
-  const AppointmentEditScreen({Key key, @required this.appointmentData}) : super(key: key);
+  const AppointmentEditScreen({Key key, @required this.appointmentData})
+      : super(key: key);
   @override
   _AppointmentEditScreenState createState() => _AppointmentEditScreenState();
 }
@@ -104,7 +105,9 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
         duration: Duration(milliseconds: 230),
         opacity: isContainerCollapsed ? 0 : 1,
         child: ActionButton(
-          value1: widget.appointmentData?.status == 'declined' ? "Re-schedule" : "Edit",
+          value1: widget.appointmentData?.status == 'declined'
+              ? "Re-schedule"
+              : "Edit",
           value2: "Delete",
           visible: widget.appointmentData?.status == 'pending',
           isLoading: isLoading,
@@ -123,10 +126,16 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                 fit: StackFit.loose,
                 children: <Widget>[
                   AnimatedContainer(
-                    curve: isContainerCollapsed ? Curves.elasticIn : Curves.elasticOut,
+                    curve: isContainerCollapsed
+                        ? Curves.elasticIn
+                        : Curves.elasticOut,
                     duration: Duration(seconds: 1),
-                    height: isContainerCollapsed ? 0 : SizeConfig.safeBlockVertical * 30,
-                    width: isContainerCollapsed ? 0 : SizeConfig.safeBlockHorizontal * 100,
+                    height: isContainerCollapsed
+                        ? 0
+                        : SizeConfig.safeBlockVertical * 30,
+                    width: isContainerCollapsed
+                        ? 0
+                        : SizeConfig.safeBlockHorizontal * 100,
                     decoration: BoxDecoration(
                       color: Theme.of(context).accentColor,
                       borderRadius: BorderRadius.only(
@@ -148,11 +157,11 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                                   duration: Duration(milliseconds: 375),
                                   opacity: isDateAndTimeVisible ? 1 : 0,
                                   child: Text(
-                                    selectedDate?.toLocal()?.toString() ??
-                                        widget.appointmentData.date ??
-                                        '',
+                                    'Time period \n Date ${(widget.appointmentData?.startDate).split(' ')[0]}'
+                                    '\n Start Time: ${((widget.appointmentData?.startDate).split(' ')[1]).split('.')[0]}'
+                                    '\nEnd Time: ${((widget.appointmentData?.endDate).split(' ')[1]).split('.')[0]}',
                                     style: TextStyle(
-                                        fontSize: SizeConfig.safeBlockHorizontal * 11,
+                                        fontSize: 25,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.white),
                                   ),
@@ -162,43 +171,6 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 65.0),
-                      child: Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0, left: 18),
-                            child: Align(
-                              alignment: Alignment.bottomLeft,
-                              child: GestureDetector(
-                                onTap: () {
-                                  print('call button pressed');
-                                },
-                                child: AnimatedOpacity(
-                                  opacity: isPhoneLogoVisible ? 1 : 0,
-                                  duration: Duration(milliseconds: 300),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.lightBlue,
-                                        border: Border.all(color: Colors.white, width: 5),
-                                        borderRadius: BorderRadius.circular(35)),
-                                    height: SizeConfig.safeBlockVertical * 8.66,
-                                    width: SizeConfig.safeBlockHorizontal * 17.33,
-                                    child: Icon(
-                                      Icons.access_alarm,
-                                      size: SizeConfig.safeBlockHorizontal * 8.5,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ],
@@ -234,7 +206,8 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                               child: Text(
                                 "Status: ${widget.appointmentData.status ?? 'Pending'}",
                                 style: TextStyle(
-                                    fontSize: SizeConfig.safeBlockHorizontal * 8,
+                                    fontSize:
+                                        SizeConfig.safeBlockHorizontal * 8,
                                     fontWeight: FontWeight.w600),
                               ),
                             )),
@@ -247,7 +220,8 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                               child: Text(
                                 'Stylist Reply Message:',
                                 style: TextStyle(
-                                    fontSize: SizeConfig.safeBlockHorizontal * 4.5,
+                                    fontSize:
+                                        SizeConfig.safeBlockHorizontal * 4.5,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.black45),
                               ),
@@ -266,7 +240,8 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                                           '\n ${widget.appointmentData.comment}'
                                   : 'No Comments',
                               style: TextStyle(
-                                  fontSize: SizeConfig.safeBlockHorizontal * 4.5,
+                                  fontSize:
+                                      SizeConfig.safeBlockHorizontal * 4.5,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black),
                             ),
@@ -287,7 +262,9 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                                     child: Text(
                                       'Customer review requested!',
                                       style: TextStyle(
-                                          fontSize: SizeConfig.safeBlockHorizontal * 4.5,
+                                          fontSize:
+                                              SizeConfig.safeBlockHorizontal *
+                                                  4.5,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.black45),
                                     ),
@@ -310,7 +287,8 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                                           )
                                         : Text(
                                             "Rate Stylist",
-                                            style: TextStyle(color: Colors.white),
+                                            style:
+                                                TextStyle(color: Colors.white),
                                           ),
                                     onPressed: () => _showFeedback(context),
                                   ),
@@ -338,13 +316,14 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
         return QuickFeedback(
           title: 'Leave a feedback', // Title of dialog
           showTextBox: true, // default false
-          textBoxHint: 'Share your feedback', // Feedback text field hint text default: Tell us more
+          textBoxHint:
+              'Share your feedback', // Feedback text field hint text default: Tell us more
           submitText: 'SUBMIT', // submit button text default: SUBMIT
           onSubmitCallback: (feedback) {
-            Bookings.rateBooking(
-                feedback, widget.appointmentData.myId, widget.appointmentData.docId);
-            Navigator.of(context)
-                .pushReplacement(MaterialPageRoute(builder: (context) => AppointmentScreen()));
+            Bookings.rateBooking(feedback, widget.appointmentData.myId,
+                widget.appointmentData.docId);
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => AppointmentScreen()));
           },
           askLaterText: 'ASK LATER',
           onAskLaterCallback: () {
@@ -359,8 +338,10 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
         minTime: DateTime.now(),
-        maxTime: DateTime.now().add(new Duration(days: 365)), onChanged: (date) {
-      print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+        maxTime: DateTime.now().add(new Duration(days: 365)),
+        onChanged: (date) {
+      print('change $date in time zone ' +
+          date.timeZoneOffset.inHours.toString());
     }, onConfirm: (date) async {
       setState(() {
         isLoading = true;

@@ -1,6 +1,7 @@
 class Appointment {
   Appointment(
-      {this.date,
+      {this.startDate,
+      this.endDate,
       this.status,
       this.myId,
       this.customerName,
@@ -10,7 +11,7 @@ class Appointment {
       this.reSchedule,
       this.comment});
 
-  String date, phoneNumber;
+  String startDate, endDate, phoneNumber;
   String myId;
   String status;
   String customerName;

@@ -3,6 +3,7 @@ import 'package:cssalonapp/pages/AboutUs.dart';
 import 'package:cssalonapp/pages/Blogs.dart';
 import 'package:cssalonapp/pages/ContactUs.dart';
 import 'package:cssalonapp/pages/HomeListView.dart';
+import 'package:cssalonapp/pages/ratings.dart';
 import 'package:cssalonapp/providers/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,16 +37,25 @@ class HomeState extends State<Home> {
           actions: <Widget>[
             GestureDetector(
               onTap: () {
+                showSearch(context: null, delegate: null);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(right: 15.0),
+                child: Icon(Icons.search),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
                 _provider.signOut();
               },
               child: Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Icon(Icons.power_settings_new),
               ),
-            )
+            ),
           ],
           title: Text(
-            "Instyle Saloon",
+            "Instyle",
             style: TextStyle(fontSize: 25.0),
           ),
           centerTitle: true,
@@ -66,14 +76,19 @@ class HomeSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
           child: topSection(context),
         ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          child: Text(
-            "Make an Appointment",
-            style: TextStyle(color: Colors.black, fontSize: 18.0, fontWeight: FontWeight.bold),
+        Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            child: Text(
+              "List of Styles available",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
         ),
         Expanded(
@@ -92,13 +107,16 @@ class HomeSection extends StatelessWidget {
           return GestureDetector(
             onTap: () {
               if (index == 1) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Blogs()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ViewStylist()));
               }
               if (index == 2) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AboutUs()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AboutUs()));
               }
               if (index == 3) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ContactUs()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ContactUs()));
               }
             },
             child: Container(
@@ -109,12 +127,16 @@ class HomeSection extends StatelessWidget {
                   alignment: Alignment.center,
                   child: GestureDetector(
                     child: Text(homeListHeaderSection[index]['name'],
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18.0)),
                     onTap: () => {
-                      if (homeListHeaderSection[index]['name'] == 'Appointments')
+                      if (homeListHeaderSection[index]['name'] ==
+                          'Appointments')
                         {
                           Navigator.push(
-                              context, MaterialPageRoute(builder: (_) => AppointmentScreen()))
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => AppointmentScreen()))
                         }
                     },
                   ),

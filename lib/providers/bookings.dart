@@ -10,7 +10,8 @@ class Bookings {
       String customerUid,
       String customerName,
       String customerPhone,
-      String date,
+      String start_date,
+      String end_date,
       String reason,
       String description}) async {
     var reference = Firestore.instance.collection("bookings").document();
@@ -19,32 +20,42 @@ class Bookings {
       'customerUid': customerUid,
       'customerName': customerName,
       'customerPhone': customerPhone,
-      'date': date,
+      'start_date': start_date,
+      'end_date': end_date,
       'status': 'pending',
       'reason': reason
     });
   }
 
   static Stream<QuerySnapshot> getHairCareStyList(String title) {
-    var reference =
-        Firestore.instance.collection("profile").where('profession', isEqualTo: title).snapshots();
+    var reference = Firestore.instance
+        .collection("profile")
+        .where('profession', isEqualTo: title)
+        .snapshots();
     return reference;
   }
 
   static Stream<QuerySnapshot> getHairStylist() {
-    var snapshot =
-        Firestore.instance.collection('profile').where('mode', isEqualTo: 'Stylist').snapshots();
+    var snapshot = Firestore.instance
+        .collection('profile')
+        .where('mode', isEqualTo: 'Stylist')
+        .snapshots();
     return snapshot;
   }
 
   static Stream<QuerySnapshot> myAppointments(String username) {
-    var snapshot =
-        Firestore.instance.collection('bookings').where('stylist', isEqualTo: username).snapshots();
+    var snapshot = Firestore.instance
+        .collection('bookings')
+        .where('stylist', isEqualTo: username)
+        .snapshots();
     return snapshot;
   }
 
   static Future<void> editBooking(Map<String, dynamic> data, String id) {
-    return Firestore.instance.collection('bookings').document(id).updateData(data);
+    return Firestore.instance
+        .collection('bookings')
+        .document(id)
+        .updateData(data);
   }
 
   static Future<void> deleteBooking(String id) {
@@ -52,7 +63,10 @@ class Bookings {
   }
 
   static Stream<QuerySnapshot> getHairStyles(id) {
-    return Firestore.instance.collection("styles").where("stylist", isEqualTo: id).snapshots();
+    return Firestore.instance
+        .collection("styles")
+        .where("stylist", isEqualTo: id)
+        .snapshots();
   }
 
   static Future<void> acceptBooking(String docId) {}
@@ -86,5 +100,14 @@ class Bookings {
       'status': 're-schedule'
     };
     Firestore.instance.collection('bookings').document(docID).updateData(data);
+  }
+
+  //get ratings of the user
+  static Future<QuerySnapshot> getRatings(String documentID) {
+    return Firestore.instance
+        .collection('profile')
+        .document(documentID)
+        .collection('ratings')
+        .getDocuments();
   }
 }

@@ -17,7 +17,7 @@ class CustomLogo extends StatelessWidget {
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage("assets/images/logo.png"),
+                    image: AssetImage("assets/images/logo.jpg"),
                     fit: BoxFit.contain,
                   ))),
           Positioned(
@@ -25,9 +25,12 @@ class CustomLogo extends StatelessWidget {
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                "Instyle Saloon",
+                "Instyle ",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: primaryColor, fontSize: 30, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: primaryColor,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold),
               ),
             ),
           )

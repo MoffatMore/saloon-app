@@ -89,7 +89,8 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
                 size: SizeConfig.horizontalBloc * 8,
               ),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilePage()));
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => ProfilePage()));
               },
             ),
             IconButton(
@@ -99,7 +100,8 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
                 size: SizeConfig.horizontalBloc * 8,
               ),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => UploadPictures()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => UploadPictures()));
               },
             ),
             IconButton(
@@ -137,24 +139,28 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
                         child: Column(
                           children: <Widget>[
                             Padding(
-                              padding: const EdgeInsets.only(left: 20.0, bottom: 9, top: 7),
+                              padding: const EdgeInsets.only(
+                                  left: 20.0, bottom: 9, top: 7),
                               child: new Container(
                                 width: SizeConfig.safeBlockHorizontal * 90,
                                 //color: Colors.pink,
                                 child: Text(
                                   'Welcome Back !',
                                   style: TextStyle(
-                                      fontSize: SizeConfig.horizontalBloc * 6, color: Colors.black),
+                                      fontSize: SizeConfig.horizontalBloc * 6,
+                                      color: Colors.black),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 20.0, bottom: 15),
+                              padding:
+                                  const EdgeInsets.only(left: 20.0, bottom: 15),
                               child: new Container(
                                 width: SizeConfig.safeBlockHorizontal * 90,
                                 //color: Colors.pink,
                                 child: Text(
-                                  _authProvider.currentUser.username ?? 'Stylist',
+                                  _authProvider.currentUser.username ??
+                                      'Stylist',
                                   style: TextStyle(
                                     fontSize: SizeConfig.horizontalBloc * 9.5,
                                     fontWeight: FontWeight.bold,
@@ -167,21 +173,25 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 10.0, bottom: 9, left: 20),
+                        padding: const EdgeInsets.only(
+                            top: 10.0, bottom: 9, left: 20),
                         child: Container(
                           width: SizeConfig.safeBlockHorizontal * 90,
                           //color: Colors.pink,
                           child: Text(
                             'Next appointments',
                             style: TextStyle(
-                                fontSize: SizeConfig.horizontalBloc * 5, color: Colors.black),
+                                fontSize: SizeConfig.horizontalBloc * 5,
+                                color: Colors.black),
                           ),
                         ),
                       ),
                       Expanded(
                         child: StreamBuilder<QuerySnapshot>(
-                            stream: Bookings.myAppointments(_authProvider.currentUser.username),
-                            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            stream: Bookings.myAppointments(
+                                _authProvider.currentUser.username),
+                            builder: (context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
                               if (snapshot.hasData) {
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -190,32 +200,48 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
                                       child: ListView.builder(
                                         scrollDirection: Axis.vertical,
                                         shrinkWrap: true,
-                                        itemCount: snapshot.data.documents.length,
-                                        itemBuilder: (BuildContext context, int index) {
+                                        itemCount:
+                                            snapshot.data.documents.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
                                           var app = Appointment(
-                                            date: snapshot.data.documents[index]['date'],
-                                            myId: snapshot.data.documents[index]['customerUid'],
-                                            customerName: snapshot.data.documents[index]
-                                                ['customerName'],
-                                            phoneNumber: snapshot.data.documents[index]
-                                                ['customerPhone'],
-                                            status: snapshot.data.documents[index]['status'],
-                                            docId: snapshot.data.documents[index].documentID,
-                                            reSchedule: snapshot.data.documents[index]
-                                                ['schedule-date'],
-                                            review: snapshot.data.documents[index]['review'],
+                                            startDate: snapshot.data
+                                                .documents[index]['start_date'],
+                                            endDate: snapshot.data
+                                                .documents[index]['end_date'],
+                                            myId: snapshot.data.documents[index]
+                                                ['customerUid'],
+                                            customerName:
+                                                snapshot.data.documents[index]
+                                                    ['customerName'],
+                                            phoneNumber:
+                                                snapshot.data.documents[index]
+                                                    ['customerPhone'],
+                                            status: snapshot.data
+                                                .documents[index]['status'],
+                                            docId: snapshot.data
+                                                .documents[index].documentID,
+                                            reSchedule:
+                                                snapshot.data.documents[index]
+                                                    ['schedule-date'],
+                                            review: snapshot.data
+                                                .documents[index]['review'],
                                           );
                                           return MyMiniAppointmentCard(
                                             onCardTapped: () {
                                               Navigator.push(
                                                   context,
                                                   PageTransition(
-                                                      type: PageTransitionType.fade,
-                                                      child: AppointmentDetailScreen(
+                                                      type: PageTransitionType
+                                                          .fade,
+                                                      child:
+                                                          AppointmentDetailScreen(
                                                         appointmentData: app,
                                                       )));
                                             },
-                                            key: Key(Random().nextInt(4000).toString()),
+                                            key: Key(Random()
+                                                .nextInt(4000)
+                                                .toString()),
                                             appointmentData: app,
                                           );
                                         },
@@ -223,7 +249,8 @@ class _AppointmentScreenState extends State<StylistAppointmentScreen> {
                                 );
                               }
                               return Padding(
-                                padding: const EdgeInsets.only(top: 10.0, bottom: 9, left: 20),
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, bottom: 9, left: 20),
                                 child: Container(
                                   width: SizeConfig.safeBlockHorizontal * 90,
                                   height: SizeConfig.verticalBloc * 3,

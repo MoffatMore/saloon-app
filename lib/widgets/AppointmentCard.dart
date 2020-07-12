@@ -36,7 +36,8 @@ class AppointmentCard extends StatelessWidget {
           customerName: appointmentData.customerName,
           status: appointmentData.status,
           myId: appointmentData.myId,
-          date: appointmentData.date,
+          startDate: appointmentData.startDate,
+          endDate: appointmentData.endDate,
           onInfoTapped: () {
             print('info pressed');
             slidingCardController.expandCard();
