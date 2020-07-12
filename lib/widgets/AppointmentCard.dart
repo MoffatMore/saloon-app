@@ -1,0 +1,63 @@
+import 'package:cssalonapp/Model/appointment.dart';
+import 'package:cssalonapp/widgets/sizeConfig.dart';
+import 'package:flutter/material.dart';
+
+import 'AppointmentBackCard.dart';
+import 'AppointmentFrontCard.dart';
+import 'SlidingCard.dart';
+
+class AppointmentCard extends StatelessWidget {
+  const AppointmentCard(
+      {Key key,
+      this.slidingCardController,
+      @required this.appointmentData,
+      @required this.onCardTapped})
+      : super(key: key);
+  final Appointment appointmentData;
+  final SlidingCardController slidingCardController;
+  final Function onCardTapped;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        print('Well the card was tapped');
+        onCardTapped();
+      },
+      child: SlidingCard(
+        slimeCardElevation: 0.5,
+        // slidingAnimationReverseCurve: Curves.bounceInOut,
+        cardsGap: SizeConfig.safeBlockVertical,
+        controller: slidingCardController,
+        slidingCardWidth: SizeConfig.horizontalBloc * 90,
+        visibleCardHeight: SizeConfig.safeBlockVertical * 27,
+        hiddenCardHeight: SizeConfig.safeBlockVertical * 15,
+        frontCardWidget: AppointmentFrontCard(
+          customerName: appointmentData.customerName,
+          status: appointmentData.status,
+          myId: appointmentData.myId,
+          startDate: appointmentData.startDate,
+          endDate: appointmentData.endDate,
+          onInfoTapped: () {
+            print('info pressed');
+            slidingCardController.expandCard();
+          },
+          onDecline: () {
+            print('Declined');
+          },
+          onAccep: () {
+            print('Accepted');
+          },
+          onRedCloseButtonTapped: () {
+            slidingCardController.collapseCard();
+          },
+        ),
+        backCardWidget: AppointmentBackCard(
+            onPhoneTapped: () {
+              print('Phone tapped');
+            },
+            patientComment: ''),
+      ),
+    );
+  }
+}

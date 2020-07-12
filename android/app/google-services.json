@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "335011603140",
+    "firebase_url": "https://salon-fb54e.firebaseio.com",
+    "project_id": "salon-fb54e",
+    "storage_bucket": "salon-fb54e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335011603140:android:aaa933f05f3a6935309f91",
+        "android_client_info": {
+          "package_name": "bw.co.pixel5tech.cssalonapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "335011603140-41uam9adnhid7os3oqg1e9rl829e5pkj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "bw.co.pixel5tech.cssalonapp",
+            "certificate_hash": "146d791cc08119b7cbd994e21f714cbec02d523b"
+          }
+        },
+        {
+          "client_id": "335011603140-2jfup1p3711i0fujmo5vlin0d7uobppo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmJMIbQmWTMRxgA0EeSPocJi1s1IuYM7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "335011603140-2jfup1p3711i0fujmo5vlin0d7uobppo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
