@@ -19,7 +19,7 @@ class ViewStylist extends StatelessWidget {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60.0),
           child: AppBar(
-            title: Text("Our Hair Stylist"),
+            title: Text("Hair Stylist"),
           ),
         ),
         backgroundColor: Colors.white,
@@ -44,7 +44,7 @@ class ViewStylist extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(5.0),
                             child: Container(
-                              height: 220.0,
+                              height: 300.0,
                               color: Colors.white,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,6 +110,25 @@ class ViewStylist extends StatelessWidget {
                                         ),
                                         SizedBox(
                                           height: 20.0,
+                                        ),
+                                        SizedBox(
+                                          height: 5.0,
+                                        ),
+                                        Text(
+                                          "Location: " +
+                                              "${snapshot.data.documents[index]['location'] ?? 'No Lcation'}",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.0),
+                                        ),
+                                        SizedBox(
+                                          height: 5.0,
+                                        ),
+                                        Text(
+                                          snapshot.data.documents[index]
+                                                  ['working_hours'] ??
+                                              'No working hours',
+                                          maxLines: 5,
                                         ),
 
                                         //dispay ration of a particular user, th

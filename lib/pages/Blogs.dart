@@ -13,7 +13,7 @@ class Blogs extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60.0),
         child: AppBar(
-          title: Text("Our Hair Stylist"),
+          title: Text("Hair Stylist"),
         ),
       ),
       backgroundColor: Colors.white,
@@ -40,7 +40,7 @@ class Blogs extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
-                                height: 170.0,
+                                height: 200.0,
                                 color: Colors.white,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,6 +111,15 @@ class Blogs extends StatelessWidget {
                                             snapshot.data.documents[index]
                                                     ['location'] ??
                                                 'No Location provided',
+                                            maxLines: 5,
+                                          ),
+                                          SizedBox(
+                                            height: 5.0,
+                                          ),
+                                          Text(
+                                            snapshot.data.documents[index]
+                                                    ['working_hours'] ??
+                                                'No working hours',
                                             maxLines: 5,
                                           ),
                                           SizedBox(

@@ -147,6 +147,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> signOut() async {
+    FirebaseAuth.instance.signOut();
     _state = AuthState.SIGNEDOUT;
     log('successfully registered user');
     notifyListeners();

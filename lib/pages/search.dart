@@ -97,7 +97,7 @@ class CustomContainer extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
-                          height: 200.0,
+                          height: 240.0,
                           color: Colors.white,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,6 +165,14 @@ class CustomContainer extends StatelessWidget {
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16.0),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Text(
+                                      styles[index]['working_hours'] ??
+                                          'No working hours',
+                                      maxLines: 5,
                                     ),
                                     SizedBox(
                                       height: 20.0,
