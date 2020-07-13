@@ -386,7 +386,7 @@ class SignupState extends State<Signup> {
                             focusNode: description,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.all(15.0),
-                              hintText: "Job Description",
+                              hintText: "Other style & Price",
                               fillColor: Colors.grey.shade200,
                               filled: true,
                               enabledBorder: formOutlineBorder,
