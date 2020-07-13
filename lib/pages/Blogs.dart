@@ -105,6 +105,15 @@ class Blogs extends StatelessWidget {
                                             maxLines: 5,
                                           ),
                                           SizedBox(
+                                            height: 5.0,
+                                          ),
+                                          Text(
+                                            snapshot.data.documents[index]
+                                                    ['location'] ??
+                                                'No Location provided',
+                                            maxLines: 5,
+                                          ),
+                                          SizedBox(
                                             height: 20.0,
                                           ),
                                           Row(
@@ -158,7 +167,10 @@ class Blogs extends StatelessWidget {
                                                               .documentID,
                                                           image:
                                                               "assets/images/user.jpg",
-                                                          blog: blogDetails,
+                                                          blog: snapshot.data
+                                                                      .documents[
+                                                                  index]
+                                                              ['description'],
                                                           title: snapshot.data
                                                                   .documents[
                                                               index]['username'],
@@ -204,6 +216,3 @@ class Blogs extends StatelessWidget {
     );
   }
 }
-
-var blogDetails =
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled ";

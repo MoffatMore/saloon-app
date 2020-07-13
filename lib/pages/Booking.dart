@@ -38,7 +38,6 @@ class BookingState extends State<Booking> {
   String _chosen = '';
   bool isAutoValid = false;
   DateTime startDate;
-  DateTime endDate;
   Validation validation = Validation();
   AuthProvider _auth;
   bool isLoading = false;
@@ -54,22 +53,6 @@ class BookingState extends State<Booking> {
     }, onConfirm: (date) {
       setState(() {
         startDate = date;
-      });
-      print('confirm $date');
-    }, locale: LocaleType.en);
-  }
-
-  openEndDatePicker(BuildContext context) async {
-    DatePicker.showDateTimePicker(context,
-        showTitleActions: true,
-        minTime: DateTime.now(),
-        maxTime: DateTime.now().add(new Duration(days: 365)),
-        onChanged: (date) {
-      print('change $date in time zone ' +
-          date.timeZoneOffset.inHours.toString());
-    }, onConfirm: (date) {
-      setState(() {
-        endDate = date;
       });
       print('confirm $date');
     }, locale: LocaleType.en);
@@ -97,8 +80,7 @@ class BookingState extends State<Booking> {
           customerName: customerCtrl.text,
           customerPhone: phoneCtrl.text,
           customerUid: _auth.currentUser.id.toString(),
-          start_date: startDate?.toString(),
-          end_date: endDate?.toString(),
+          date: startDate?.toString(),
           stylist: widget.stylist != null ? widget.stylist : _chosen,
           reason: widget.title);
       setState(() {
@@ -273,7 +255,7 @@ class BookingState extends State<Booking> {
                                   padding: EdgeInsets.all(10.0),
                                   child: Text((startDate != null)
                                       ? startDate.toLocal().toString()
-                                      : "Select Start DateTime"),
+                                      : "Select DateTime"),
                                 ),
                               ),
                             ),
@@ -283,7 +265,7 @@ class BookingState extends State<Booking> {
                                         EdgeInsets.only(left: 15.0, top: 10.0),
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      "Please select start date time",
+                                      "Please select Date time",
                                       style: TextStyle(
                                           color: Colors.red, fontSize: 12),
                                     ),
@@ -292,38 +274,6 @@ class BookingState extends State<Booking> {
                             SizedBox(
                               height: 20.0,
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                openEndDatePicker(context);
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(5.0),
-                                child: Container(
-                                  height: 50,
-                                  alignment: Alignment.centerLeft,
-                                  width: double.infinity,
-                                  color: Colors.grey.shade300,
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text((endDate != null)
-                                      ? endDate.toLocal().toString()
-                                      : startDate != null
-                                          ? startDate.toLocal().toString()
-                                          : "Select End DateTime"),
-                                ),
-                              ),
-                            ),
-                            (isAutoValid & (endDate == null))
-                                ? Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15.0, top: 10.0),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Please select end date time",
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 12),
-                                    ),
-                                  )
-                                : Container(),
                             SizedBox(
                               height: 20.0,
                             ),

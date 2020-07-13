@@ -56,7 +56,7 @@ class MyMiniAppointmentCard extends StatelessWidget {
                         width: SizeConfig.safeBlockHorizontal * 90,
                         //color: Colors.pink,
                         child: Text(
-                          'Time period ${appointmentData?.startDate} ${appointmentData?.endDate}',
+                          'Time period ${appointmentData?.date}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: SizeConfig.safeBlockHorizontal * 4.0,

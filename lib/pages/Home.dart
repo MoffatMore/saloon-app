@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cssalonapp/Model/HomeListData.dart';
 import 'package:cssalonapp/pages/AboutUs.dart';
 import 'package:cssalonapp/pages/ContactUs.dart';
@@ -5,6 +7,7 @@ import 'package:cssalonapp/pages/HomeListView.dart';
 import 'package:cssalonapp/pages/ratings.dart';
 import 'package:cssalonapp/pages/search.dart';
 import 'package:cssalonapp/providers/auth.dart';
+import 'package:cssalonapp/providers/bookings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,9 +40,7 @@ class HomeState extends State<Home> {
           actions: <Widget>[
             GestureDetector(
               onTap: () {
-                showSearch(
-                    context: context,
-                    delegate: SearchStyle(styles: homeListViewSection));
+                showSearch(context: context, delegate: SearchStyle());
               },
               child: Padding(
                 padding: EdgeInsets.only(right: 15.0),

@@ -31,6 +31,7 @@ class SignupState extends State<Signup> {
   FocusNode username;
   FocusNode surname;
   FocusNode phone;
+  FocusNode location;
   FocusNode description;
   TextEditingController emailCtrl;
   TextEditingController passwordCtrl;
@@ -39,11 +40,13 @@ class SignupState extends State<Signup> {
   TextEditingController phoneCtrl;
   TextEditingController descriptionCtrl;
   TextEditingController durationCtrl;
+  TextEditingController locationCtrl;
   AuthProvider _provider;
   bool submitted;
   String mode;
   String profession;
-  Future<File> imageFile;
+  File imageFile;
+  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -54,6 +57,7 @@ class SignupState extends State<Signup> {
     username = FocusNode();
     surname = FocusNode();
     phone = FocusNode();
+    location = FocusNode();
     emailCtrl = TextEditingController();
     passwordCtrl = TextEditingController();
     usernameCtrl = TextEditingController();
@@ -61,6 +65,7 @@ class SignupState extends State<Signup> {
     phoneCtrl = TextEditingController();
     descriptionCtrl = TextEditingController();
     durationCtrl = TextEditingController();
+    locationCtrl = TextEditingController();
 
     submitted = false;
   }
@@ -95,6 +100,7 @@ class SignupState extends State<Signup> {
     surname.unfocus();
     phone.unfocus();
     description.unfocus();
+    location.unfocus();
   }
 
   signup(BuildContext context) async {
@@ -132,43 +138,49 @@ class SignupState extends State<Signup> {
       } else {
         setState(() => submitted = true);
         File file = await imageFile;
-        _provider.createUser(usernameCtrl.text, phoneCtrl.text, surnameCtrl.text, emailCtrl.text,
-            passwordCtrl.text, mode, profession, descriptionCtrl.text, file, durationCtrl.text);
+        _provider.createUser(
+            usernameCtrl.text,
+            phoneCtrl.text,
+            surnameCtrl.text,
+            emailCtrl.text,
+            passwordCtrl.text,
+            mode,
+            profession,
+            descriptionCtrl.text,
+            file,
+            durationCtrl.text,
+            locationCtrl.text);
         Navigator.pop(context);
       }
     }
   }
 
   //Open gallery
-  pickImageFromGallery(ImageSource source) {
+  pickImageFromGallery(ImageSource source) async {
+    var image = await picker.getImage(source: ImageSource.gallery);
     setState(() {
-      imageFile = ImagePicker.pickImage(source: source);
+      imageFile = File(image.path);
     });
   }
 
   Widget showImage() {
-    return FutureBuilder<File>(
-      future: imageFile,
-      builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
-          return Image.file(
-            snapshot.data,
-            width: 300,
-            height: 300,
-          );
-        } else if (snapshot.error != null) {
-          return const Text(
-            'Error Picking Image',
-            textAlign: TextAlign.center,
-          );
-        } else {
-          return const Text(
-            'No Image Selected',
-            textAlign: TextAlign.center,
-          );
-        }
-      },
-    );
+    if (imageFile != null) {
+      return Image.file(
+        imageFile,
+        width: 300,
+        height: 200,
+      );
+    } else if (imageFile != null) {
+      return const Text(
+        'Error Picking Image',
+        textAlign: TextAlign.center,
+      );
+    } else {
+      return const Text(
+        'No Image Selected',
+        textAlign: TextAlign.center,
+      );
+    }
   }
 
   @override
@@ -187,7 +199,8 @@ class SignupState extends State<Signup> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(
-                    height: (MediaQuery.of(context).orientation == Orientation.portrait)
+                    height: (MediaQuery.of(context).orientation ==
+                            Orientation.portrait)
                         ? MediaQuery.of(context).size.height / 130
                         : 0,
                   ),
@@ -201,7 +214,8 @@ class SignupState extends State<Signup> {
                       textInputAction: TextInputAction.next,
                       controller: usernameCtrl,
                       focusNode: username,
-                      validator: (value) => validation.validate("Username", value, TYPE.TEXT),
+                      validator: (value) =>
+                          validation.validate("Username", value, TYPE.TEXT),
                       hintText: "Username",
                       onSubmitted: (value) {
                         username.unfocus();
@@ -217,7 +231,8 @@ class SignupState extends State<Signup> {
                       textInputAction: TextInputAction.next,
                       controller: surnameCtrl,
                       focusNode: surname,
-                      validator: (value) => validation.validate("Surname", value, TYPE.TEXT),
+                      validator: (value) =>
+                          validation.validate("Surname", value, TYPE.TEXT),
                       hintText: "Surname",
                       onSubmitted: (value) {
                         surname.unfocus();
@@ -233,7 +248,8 @@ class SignupState extends State<Signup> {
                       textInputAction: TextInputAction.next,
                       controller: phoneCtrl,
                       focusNode: phone,
-                      validator: (value) => validation.validate("Phone", value, TYPE.TEXT),
+                      validator: (value) =>
+                          validation.validate("Phone", value, TYPE.TEXT),
                       hintText: "Contact +267",
                       onSubmitted: (value) {
                         phone.unfocus();
@@ -251,7 +267,8 @@ class SignupState extends State<Signup> {
                       textInputAction: TextInputAction.next,
                       controller: emailCtrl,
                       focusNode: email,
-                      validator: (value) => validation.validate("Email", value, TYPE.EMAIL),
+                      validator: (value) =>
+                          validation.validate("Email", value, TYPE.EMAIL),
                       hintText: "Email",
                       onSubmitted: (value) {
                         email.unfocus();
@@ -328,13 +345,13 @@ class SignupState extends State<Signup> {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20.0),
                           child: TextFormField(
-                            textInputAction: TextInputAction.next,
+                            textInputAction: TextInputAction.newline,
                             controller: descriptionCtrl,
                             focusNode: description,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.all(15.0),
                               hintText: "Job Description",
-                              fillColor: Colors.white,
+                              fillColor: Colors.grey.shade200,
                               filled: true,
                               enabledBorder: formOutlineBorder,
                               border: formOutlineBorder,
@@ -350,6 +367,35 @@ class SignupState extends State<Signup> {
                       ],
                     ),
                   ),
+                  Visibility(
+                    visible: mode != null && mode == 'Stylist',
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 10.0),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: TextFormField(
+                            textInputAction: TextInputAction.next,
+                            controller: locationCtrl,
+                            focusNode: location,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(15.0),
+                              hintText: "Location",
+                              fillColor: Colors.grey.shade200,
+                              filled: true,
+                              enabledBorder: formOutlineBorder,
+                              border: formOutlineBorder,
+                              focusedBorder: formOutlineBorder,
+                            ),
+                            onSaved: (value) {
+                              location.unfocus();
+                            },
+                            keyboardType: TextInputType.text,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   SizedBox(height: 10.0),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -358,7 +404,8 @@ class SignupState extends State<Signup> {
                       textInputAction: TextInputAction.next,
                       controller: passwordCtrl,
                       focusNode: password,
-                      validator: (value) => validation.validate("Password", value, TYPE.PASSWORD),
+                      validator: (value) =>
+                          validation.validate("Password", value, TYPE.PASSWORD),
                       hintText: "Password",
                       onSubmitted: (value) {
                         password.unfocus();
@@ -400,7 +447,8 @@ class SignupState extends State<Signup> {
                       child: CustomTextFormField(
                         textInputAction: TextInputAction.next,
                         controller: durationCtrl,
-                        validator: (value) => validation.validate("duration", value, TYPE.TEXT),
+                        validator: (value) =>
+                            validation.validate("duration", value, TYPE.TEXT),
                         hintText: "Duration (Hrs&mins)",
                         onSubmitted: (value) {},
                         textInputType: TextInputType.text,
@@ -441,7 +489,9 @@ class SignupState extends State<Signup> {
                           },
                           child: Text(
                             "Login here",
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
                         )
                       ],
@@ -469,7 +519,10 @@ class SignupState extends State<Signup> {
           ),
           Text(
             "Register now",
-            style: TextStyle(fontSize: 23.0, color: Colors.black, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 23.0,
+                color: Colors.black,
+                fontWeight: FontWeight.bold),
           ),
           Container(
             width: MediaQuery.of(context).size.width / 4.5,

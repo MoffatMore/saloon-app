@@ -9,6 +9,7 @@ class User {
   final String profession;
   final String description;
   final String mode;
+  final String location;
 
   User(
       {this.email,
@@ -20,7 +21,8 @@ class User {
       this.customer,
       this.profession,
       this.description,
-      this.mode});
+      this.mode,
+      this.location});
 
   factory User.fromMap(Map map) {
     String username = map["username"];
@@ -32,6 +34,7 @@ class User {
     String profession = map["profession"];
     String description = map["description"];
     String mode = map["mode"];
+    String location = map["location"];
 
     return User(
         customer: customer,
@@ -42,6 +45,7 @@ class User {
         phone: phone,
         description: description,
         profession: profession,
+        location: location,
         mode: mode);
   }
 

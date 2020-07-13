@@ -8,8 +8,7 @@ class AppointmentFrontCard extends StatefulWidget {
   final Function onRedCloseButtonTapped;
   final Function onAccep;
   final Function onDecline;
-  final String startDate;
-  final String endDate;
+  final String date;
   final String status;
   const AppointmentFrontCard(
       {Key key,
@@ -18,8 +17,7 @@ class AppointmentFrontCard extends StatefulWidget {
       @required this.customerName,
       @required this.onInfoTapped,
       @required this.myId,
-      @required this.startDate,
-      @required this.endDate,
+      @required this.date,
       @required this.status,
       @required this.onRedCloseButtonTapped})
       : super(key: key);
@@ -82,9 +80,7 @@ class _AppointmentFrontCardState extends State<AppointmentFrontCard> {
                           width: 10,
                         ),
                         Text(
-                          'Time period \n Date ${(widget.startDate).split(' ')[0]}'
-                          '\n Start Time: ${((widget.startDate).split(' ')[1]).split('.')[0]}'
-                          '\nEnd Time: ${((widget.endDate).split(' ')[1]).split('.')[0]}',
+                          'Time period \n Date ${(widget.date)}',
                           style: TextStyle(
                               fontSize: SizeConfig.safeBlockHorizontal * 4.7,
                               color: Colors.white70),

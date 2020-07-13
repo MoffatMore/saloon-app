@@ -10,8 +10,7 @@ class Bookings {
       String customerUid,
       String customerName,
       String customerPhone,
-      String start_date,
-      String end_date,
+      String date,
       String reason,
       String description}) async {
     var reference = Firestore.instance.collection("bookings").document();
@@ -20,8 +19,7 @@ class Bookings {
       'customerUid': customerUid,
       'customerName': customerName,
       'customerPhone': customerPhone,
-      'start_date': start_date,
-      'end_date': end_date,
+      'date': date,
       'status': 'pending',
       'reason': reason
     });
@@ -40,6 +38,14 @@ class Bookings {
         .collection('profile')
         .where('mode', isEqualTo: 'Stylist')
         .snapshots();
+    return snapshot;
+  }
+
+  static Future searchHairStylist() async {
+    var snapshot = await Firestore.instance
+        .collection('profile')
+        .where('mode', isEqualTo: 'Stylist')
+        .getDocuments();
     return snapshot;
   }
 

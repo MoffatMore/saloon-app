@@ -157,9 +157,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen>
                                   duration: Duration(milliseconds: 375),
                                   opacity: isDateAndTimeVisible ? 1 : 0,
                                   child: Text(
-                                    'Time period \n Date ${(widget.appointmentData?.startDate).split(' ')[0]}'
-                                    '\n Start Time: ${((widget.appointmentData?.startDate).split(' ')[1]).split('.')[0]}'
-                                    '\nEnd Time: ${((widget.appointmentData?.endDate).split(' ')[1]).split('.')[0]}',
+                                    'Time period \n Date ${(widget.appointmentData?.date)}',
                                     style: TextStyle(
                                         fontSize: 25,
                                         fontWeight: FontWeight.w500,

@@ -53,7 +53,8 @@ class AuthProvider with ChangeNotifier {
     email = email.trim();
     try {
       // sign in with firebase
-      AuthResult _result = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      AuthResult _result =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -87,7 +88,8 @@ class AuthProvider with ChangeNotifier {
       String profession,
       String description,
       File image,
-      String duration) async {
+      String duration,
+      String location) async {
     signIn();
     try {
       email = email.trim();
@@ -104,28 +106,34 @@ class AuthProvider with ChangeNotifier {
             'mode': mode,
           }).then((value) => signOut());
         } else {
-          StorageReference storageReference =
-              FirebaseStorage.instance.ref().child('styles/${Path.basename(image.path)}');
+          StorageReference storageReference = FirebaseStorage.instance
+              .ref()
+              .child('styles/${Path.basename(image.path)}');
           StorageUploadTask uploadTask = storageReference.putFile(image);
           await uploadTask.onComplete;
 
           await storageReference.getDownloadURL().then((fileURL) {
             print('File Uploaded');
-            Firestore.instance
-                .collection('styles')
-                .add({'stylist': user.uid, 'picture': fileURL, 'duration': duration}).then(
-                    (value) => {
-                          print('style Uploaded'),
-                          Firestore.instance.collection("profile").document(user.uid).setData({
-                            "username": username,
-                            "surname": lastname,
-                            "phone": phone,
-                            "id": user.uid,
-                            'mode': mode,
-                            'profession': profession,
-                            'description': description,
-                          }).then((value) => signOut())
-                        });
+            Firestore.instance.collection('styles').add({
+              'stylist': user.uid,
+              'picture': fileURL,
+              'duration': duration
+            }).then((value) => {
+                  print('style Uploaded'),
+                  Firestore.instance
+                      .collection("profile")
+                      .document(user.uid)
+                      .setData({
+                    "username": username,
+                    "surname": lastname,
+                    "phone": phone,
+                    "id": user.uid,
+                    'mode': mode,
+                    'profession': profession,
+                    'description': description,
+                    'location': location
+                  }).then((value) => signOut())
+                });
           });
         }
       } else {
@@ -145,17 +153,19 @@ class AuthProvider with ChangeNotifier {
   Future uploadStyles(List<Asset> images, String duration) {
     images.forEach((image) async {
       File file = await writeToFile(await image.getByteData(), image.name);
-      StorageReference storageReference =
-          FirebaseStorage.instance.ref().child('styles/${Path.basename(file.path)}');
+      StorageReference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('styles/${Path.basename(file.path)}');
       StorageUploadTask uploadTask = storageReference.putFile(file);
       await uploadTask.onComplete;
 
       return storageReference.getDownloadURL().then((fileURL) {
         print('File Uploaded');
-        Firestore.instance
-            .collection("styles")
-            .document()
-            .setData({"stylist": currentUser.id, 'picture': fileURL, 'duration': duration});
+        Firestore.instance.collection("styles").document().setData({
+          "stylist": currentUser.id,
+          'picture': fileURL,
+          'duration': duration
+        });
       });
     });
   }
@@ -163,8 +173,8 @@ class AuthProvider with ChangeNotifier {
   Future<File> writeToFile(ByteData data, String name) async {
     final buffer = data.buffer;
     final path = await _localPath;
-    return new File('$path/$name')
-        .writeAsBytes(buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+    return new File('$path/$name').writeAsBytes(
+        buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
   }
 
   Future<String> get _localPath async {
@@ -181,11 +191,21 @@ class AuthProvider with ChangeNotifier {
   }
 
   Stream<DocumentSnapshot> getProfile() {
-    return Firestore.instance.collection("profile").document(currentUser.id).snapshots();
+    return Firestore.instance
+        .collection("profile")
+        .document(currentUser.id)
+        .snapshots();
   }
 
-  Future<void> updateUser(String username, String phone, String lastname, String email,
-      String password, String profession, String description, File image) async {
+  Future<void> updateUser(
+      String username,
+      String phone,
+      String lastname,
+      String email,
+      String password,
+      String profession,
+      String description,
+      File image) async {
     try {
       email = email.trim();
       password = password.trim();
@@ -200,12 +220,16 @@ class AuthProvider with ChangeNotifier {
         var user = authResult.user;
         if (currentUser.mode == 'Customer') {
           if (image != null) {
-            StorageReference storageReference =
-                FirebaseStorage.instance.ref().child('styles/${Path.basename(image.path)}');
+            StorageReference storageReference = FirebaseStorage.instance
+                .ref()
+                .child('styles/${Path.basename(image.path)}');
             StorageUploadTask uploadTask = storageReference.putFile(image);
             await uploadTask.onComplete;
             await storageReference.getDownloadURL().then((fileURL) {
-              Firestore.instance.collection("profile").document(user.uid).setData({
+              Firestore.instance
+                  .collection("profile")
+                  .document(user.uid)
+                  .setData({
                 "username": username,
                 "surname": lastname,
                 "phone": phone,
@@ -214,7 +238,10 @@ class AuthProvider with ChangeNotifier {
               });
             });
           } else {
-            await Firestore.instance.collection("profile").document(user.uid).setData({
+            await Firestore.instance
+                .collection("profile")
+                .document(user.uid)
+                .setData({
               "username": username,
               "surname": lastname,
               "phone": phone,
@@ -223,12 +250,16 @@ class AuthProvider with ChangeNotifier {
           }
         } else {
           if (image != null) {
-            StorageReference storageReference =
-                FirebaseStorage.instance.ref().child('styles/${Path.basename(image.path)}');
+            StorageReference storageReference = FirebaseStorage.instance
+                .ref()
+                .child('styles/${Path.basename(image.path)}');
             StorageUploadTask uploadTask = storageReference.putFile(image);
             await uploadTask.onComplete;
             await storageReference.getDownloadURL().then((fileURL) {
-              Firestore.instance.collection("profile").document(user.uid).setData({
+              Firestore.instance
+                  .collection("profile")
+                  .document(user.uid)
+                  .setData({
                 "username": username,
                 "surname": lastname,
                 "phone": phone,
@@ -239,7 +270,10 @@ class AuthProvider with ChangeNotifier {
               });
             });
           } else {
-            Firestore.instance.collection("profile").document(user.uid).setData({
+            Firestore.instance
+                .collection("profile")
+                .document(user.uid)
+                .setData({
               "username": username,
               "surname": lastname,
               "phone": phone,

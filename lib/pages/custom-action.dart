@@ -39,7 +39,8 @@ class CustomActionButton extends StatelessWidget {
                     highlightElevation: 0,
                     hoverElevation: 0,
                     elevation: 0.5,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50)),
                     textColor: Colors.white,
                     color: Colors.blue,
                     child: isLoading
@@ -47,9 +48,9 @@ class CustomActionButton extends StatelessWidget {
                             child: CupertinoActivityIndicator(),
                           )
                         : Text(
-                            value1 ?? 'accept',
+                            value1 ?? 'Accept',
                             style: TextStyle(
-                              fontSize: SizeConfig.safeBlockHorizontal * 5.5,
+                              fontSize: 16,
                             ),
                           ),
                     onPressed: onAcceptPressed,
@@ -69,14 +70,15 @@ class CustomActionButton extends StatelessWidget {
                       highlightElevation: 0,
                       hoverElevation: 0,
                       elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50)),
                       textColor: Colors.black26,
                       color: Color(0xffEBEFFB),
                       child: Text(
-                        'Re-schedule',
+                        're-schedule',
                         style: TextStyle(
                           color: Color(0xff878FA6),
-                          fontSize: SizeConfig.safeBlockHorizontal * 5,
+                          fontSize: 16,
                         ),
                       ),
                       onPressed: onReschedulePressed),
@@ -93,14 +95,15 @@ class CustomActionButton extends StatelessWidget {
                         highlightElevation: 0,
                         hoverElevation: 0,
                         elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50)),
                         textColor: Colors.black26,
                         color: Colors.redAccent,
                         child: Text(
                           'Decline',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: SizeConfig.safeBlockHorizontal * 5,
+                            fontSize: 16,
                           ),
                         ),
                         onPressed: onDecinePressed),

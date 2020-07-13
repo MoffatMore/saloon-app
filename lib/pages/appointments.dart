@@ -77,10 +77,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (BuildContext context, int index) {
                           var app = Appointment(
-                              startDate: snapshot.data.documents[index]
-                                  ['start_date'],
-                              endDate: snapshot.data.documents[index]
-                                  ['end_date'],
+                              date: snapshot.data.documents[index]['date'],
                               myId: snapshot.data.documents[index]['stylist'],
                               customerName: snapshot.data.documents[index]
                                   ['customerName'],
