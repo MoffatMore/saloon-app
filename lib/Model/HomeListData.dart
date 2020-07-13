@@ -10,8 +10,6 @@ List<Map> homeListViewSection = [
 List<Map> homeListHeaderSection = [
   {"name": "Appointments"},
   {"name": "Stylist Profile"},
-  {"name": "About Us "},
-  {"name": "Contact Us "},
 ];
 
 List styList = [

@@ -11,6 +11,7 @@ import 'package:cssalonapp/widgets/CustomTextFormField.dart';
 import 'package:dropdown_formfield/dropdown_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -47,6 +48,9 @@ class SignupState extends State<Signup> {
   String profession;
   File imageFile;
   final picker = ImagePicker();
+  bool isAutoValid = false;
+  DateTime startDate;
+  DateTime endDate;
 
   @override
   void initState() {
@@ -66,7 +70,6 @@ class SignupState extends State<Signup> {
     descriptionCtrl = TextEditingController();
     durationCtrl = TextEditingController();
     locationCtrl = TextEditingController();
-
     submitted = false;
   }
 
@@ -101,6 +104,37 @@ class SignupState extends State<Signup> {
     phone.unfocus();
     description.unfocus();
     location.unfocus();
+  }
+
+  openStartDatePicker(BuildContext context) async {
+    DatePicker.showTimePicker(context,
+        showTitleActions: true, showSecondsColumn: false, onChanged: (date) {
+      print('change $date in time zone ' +
+          date.timeZoneOffset.inHours.toString());
+    }, onConfirm: (date) {
+      setState(() {
+        startDate = date;
+      });
+      print('confirm $date');
+    }, locale: LocaleType.en);
+  }
+
+  openEndDatePicker(BuildContext context) async {
+    DatePicker.showTimePicker(context,
+        showTitleActions: true, showSecondsColumn: false, onChanged: (date) {
+      print('change $date in time zone ' +
+          date.timeZoneOffset.inHours.toString());
+    }, onConfirm: (date) {
+      setState(() {
+        endDate = date;
+      });
+      print('confirm $date');
+    }, locale: LocaleType.en);
+  }
+
+  String getDate(DateTime time) {
+    double _time = double.parse("${time.hour}.${time.minute}");
+    return "${time.day}/${time.month}/${time.year} ${_time}  ${time.weekday}";
   }
 
   signup(BuildContext context) async {
@@ -138,6 +172,7 @@ class SignupState extends State<Signup> {
       } else {
         setState(() => submitted = true);
         File file = await imageFile;
+        String hours = startDate.toString() + ' to ' + endDate.toString();
         _provider.createUser(
             usernameCtrl.text,
             phoneCtrl.text,
@@ -149,7 +184,8 @@ class SignupState extends State<Signup> {
             descriptionCtrl.text,
             file,
             durationCtrl.text,
-            locationCtrl.text);
+            locationCtrl.text,
+            hours);
         Navigator.pop(context);
       }
     }
@@ -367,6 +403,84 @@ class SignupState extends State<Signup> {
                       ],
                     ),
                   ),
+                  SizedBox(height: 10.0),
+                  Visibility(
+                    visible: mode != null && mode == 'Stylist',
+                    child: GestureDetector(
+                        onTap: () {
+                          openStartDatePicker(context);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5.0),
+                            child: Container(
+                              height: 50,
+                              alignment: Alignment.centerLeft,
+                              width: double.infinity,
+                              color: Colors.grey.shade300,
+                              padding: EdgeInsets.all(10.0),
+                              child: Text((startDate != null)
+                                  ? startDate.toLocal().toString()
+                                  : "Available From Time"),
+                            ),
+                          ),
+                        )),
+                  ),
+                  Visibility(
+                      visible: mode != null && mode == 'Stylist',
+                      child: (isAutoValid & (startDate == null))
+                          ? Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Container(
+                                padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Please select Available from time",
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 12),
+                                ),
+                              ))
+                          : Container()),
+                  SizedBox(height: 10.0),
+                  Visibility(
+                    visible: mode != null && mode == 'Stylist',
+                    child: GestureDetector(
+                        onTap: () {
+                          openEndDatePicker(context);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5.0),
+                            child: Container(
+                              height: 50,
+                              alignment: Alignment.centerLeft,
+                              width: double.infinity,
+                              color: Colors.grey.shade300,
+                              padding: EdgeInsets.all(10.0),
+                              child: Text((endDate != null)
+                                  ? endDate.toLocal().toString()
+                                  : "Available To Time"),
+                            ),
+                          ),
+                        )),
+                  ),
+                  Visibility(
+                      visible: mode != null && mode == 'Stylist',
+                      child: (isAutoValid & (startDate == null))
+                          ? Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Container(
+                                padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Please select Available time",
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 12),
+                                ),
+                              ))
+                          : Container()),
                   Visibility(
                     visible: mode != null && mode == 'Stylist',
                     child: Column(

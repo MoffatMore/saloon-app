@@ -89,7 +89,8 @@ class AuthProvider with ChangeNotifier {
       String description,
       File image,
       String duration,
-      String location) async {
+      String location,
+      String workingHours) async {
     signIn();
     try {
       email = email.trim();
@@ -131,7 +132,8 @@ class AuthProvider with ChangeNotifier {
                     'mode': mode,
                     'profession': profession,
                     'description': description,
-                    'location': location
+                    'location': location,
+                    'working_hours': workingHours
                   }).then((value) => signOut())
                 });
           });

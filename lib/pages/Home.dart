@@ -113,14 +113,6 @@ class HomeSection extends StatelessWidget {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ViewStylist()));
               }
-              if (index == 2) {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AboutUs()));
-              }
-              if (index == 3) {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ContactUs()));
-              }
             },
             child: Container(
               width: 200.0,
